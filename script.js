@@ -28,6 +28,45 @@ document.querySelectorAll('.swatch:not(.add-swatch)').forEach(s=>s.addEventListe
 $('addSwatch')?.addEventListener('click',()=>{const value=prompt('HEX-цвет, например #d7b7d9');if(!value||!/^#[0-9a-fA-F]{6}$/.test(value.trim())){status.textContent='Нужен HEX-цвет формата #RRGGBB.';return;}const s=document.createElement('button');s.type='button';s.className='swatch';s.style.setProperty('--swatch',value.trim());s.dataset.color=value.trim();s.addEventListener('click',()=>selectSwatch(s));$('swatches').insertBefore(s,$('addSwatch'));selectSwatch(s);});
 $('saveVariant')?.addEventListener('click',()=>status.textContent='Цвет сохранён как вариант проекта.');
 
+function setSelectValue(id,value){
+  const el=$(id);if(!el||!value)return;
+  const option=[...el.options].find(o=>o.value===value||o.textContent===value);
+  if(option)el.value=option.value;
+}
+function setType(value){
+  if(!value)return;
+  const chip=[...document.querySelectorAll('#types .chip')].find(c=>c.dataset.value===value||c.textContent.trim()===value);
+  if(chip){document.querySelectorAll('#types .chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');}
+}
+function applyGarmentSpec(spec={}){
+  const cas=spec.cas||{};
+  const mapType={'top':'Топ','shirt':'Футболка','t-shirt':'Футболка','sweater':'Свитер','dress':'Платье','skirt':'Юбка','pants':'Брюки','shorts':'Шорты','jacket':'Куртка'};
+  const rawType=String(spec.garment_type||'').trim();
+  setType(mapType[rawType.toLowerCase()]||rawType);
+  setSelectValue('gender',cas.gender);
+  setSelectValue('age',cas.age);
+  const tags=Array.isArray(cas.style_tags)?cas.style_tags:[];
+  const styleText=tags.join(' ');
+  const styleMatch=['Dark Feminine','Gothic','Y2K','Streetwear','Coquette','Minimal','Casual'].find(x=>styleText.toLowerCase().includes(x.toLowerCase()));
+  if(styleMatch)setSelectValue('style',styleMatch);
+  const categories=Array.isArray(cas.categories)?cas.categories:[];
+  const categoryMatch=['Everyday','Formal','Athletic','Sleep','Party','Swimwear','Hot Weather','Cold Weather'].find(x=>categories.some(c=>String(c).toLowerCase()===x.toLowerCase()));
+  if(categoryMatch)setSelectValue('category',categoryMatch);
+  const colors=Array.isArray(spec.colors)?spec.colors:[];
+  if(colors.length){
+    const hexes=colors.map(c=>String(c).match(/#[0-9a-fA-F]{6}/)?.[0]).filter(Boolean);
+    if(hexes.length){
+      const existing=getSwatches();
+      const needed=hexes.filter(x=>!existing.includes(x));
+      needed.forEach(value=>{
+        const s=document.createElement('button');s.type='button';s.className='swatch';s.style.setProperty('--swatch',value);s.dataset.color=value;s.addEventListener('click',()=>selectSwatch(s));$('swatches')?.insertBefore(s,$('addSwatch'));
+      });
+    }
+  }
+  const parts=[rawType,spec.silhouette,Array.isArray(spec.materials)?spec.materials.join(', '):'',Array.isArray(spec.details)?spec.details.join(', '):''].filter(Boolean);
+  if(parts.length)$('description').value=parts.join(' · ');
+  $('projectState').textContent='AI FILLED';
+}
 function getData(){
   return {
     name:$('name').value.trim()||'Новый предмет',
@@ -76,10 +115,13 @@ $('analyzeDesign')?.addEventListener('click',async()=>{
   try{
     const response=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await response.json();if(!response.ok)throw new Error(data.error||'Ошибка генерации');
-    aiResultState.textContent='READY';aiDesign=data;\n    const spec=data.garmentSpec||{};\n    const cas=spec.cas||{};\n    const list=(items=[])=>items.map(x=>'<li>'+escapeHtml(x)+'</li>').join('');\n    aiResult.innerHTML='<div class="ai-design-result"><img src="'+data.image+'" alt="Maxis Match clothing concept"><div class="design-meta"><b>MAXIS MATCH</b><span>'+escapeHtml(data.source||'Фото + описание')+'</span></div></div>'+(data.garmentSpec?'<div class="garment-spec"><div class="spec-title"><strong>Спецификация одежды</strong><span>AI SPEC</span></div><div class="spec-grid"><div><small>Тип</small><b>'+escapeHtml(spec.garment_type)+'</b></div><div><small>Силуэт</small><b>'+escapeHtml(spec.silhouette)+'</b></div><div><small>Материалы</small><span>'+list(spec.materials)+'</span></div><div><small>Цвета</small><span>'+list(spec.colors)+'</span></div><div><small>Детали</small><span>'+list(spec.details)+'</span></div><div><small>Maxis Match</small><span>'+list(spec.maxis_match_notes)+'</span></div></div><div class="spec-cas"><strong>CAS</strong><span>'+escapeHtml(cas.body_type)+' · '+escapeHtml(cas.gender)+' · '+escapeHtml(cas.age)+'</span><span>'+escapeHtml((cas.categories||[]).join(' · '))+'</span></div></div>':'');\n    applyDesign.classList.remove('hidden');status.textContent='Maxis Match концепт и спецификация одежды готовы.';
+    aiResultState.textContent='READY';aiDesign=data;
+    const spec=data.garmentSpec||{};\n    const cas=spec.cas||{};\n    const list=(items=[])=>items.map(x=>'<li>'+escapeHtml(x)+'</li>').join('');\n    aiResult.innerHTML='<div class="ai-design-result"><img src="'+data.image+'" alt="Maxis Match clothing concept"><div class="design-meta"><b>MAXIS MATCH</b><span>'+escapeHtml(data.source||'Фото + описание')+'</span></div></div>'+(data.garmentSpec?'<div class="garment-spec"><div class="spec-title"><strong>Спецификация одежды</strong><span>AI SPEC</span></div><div class="spec-grid"><div><small>Тип</small><b>'+escapeHtml(spec.garment_type)+'</b></div><div><small>Силуэт</small><b>'+escapeHtml(spec.silhouette)+'</b></div><div><small>Материалы</small><span>'+list(spec.materials)+'</span></div><div><small>Цвета</small><span>'+list(spec.colors)+'</span></div><div><small>Детали</small><span>'+list(spec.details)+'</span></div><div><small>Maxis Match</small><span>'+list(spec.maxis_match_notes)+'</span></div></div><div class="spec-cas"><strong>CAS</strong><span>'+escapeHtml(cas.body_type)+' · '+escapeHtml(cas.gender)+' · '+escapeHtml(cas.age)+'</span><span>'+escapeHtml((cas.categories||[]).join(' · '))+'</span></div></div>':'');\n    applyDesign.classList.remove('hidden');
+    applyGarmentSpec(spec);
+    status.textContent='Maxis Match дизайн и параметры одежды готовы. Проверь дополнительные настройки, если хочешь их изменить.';
   }catch(error){console.error(error);aiResultState.textContent='ERROR';aiResult.innerHTML='<span class="ai-placeholder">Не удалось создать дизайн: '+escapeHtml(error.message)+'</span>';status.textContent='Ошибка AI: '+error.message;}
 });
-applyDesign?.addEventListener('click',()=>{if(!aiDesign)return;const text=aiDescription.value.trim();if(text)$('description').value=text;addProject(getData());$('create').scrollIntoView({behavior:'smooth'});status.textContent='Maxis Match дизайн применён к проекту.';});
+applyDesign?.addEventListener('click',()=>{if(!aiDesign)return;applyGarmentSpec(aiDesign.garmentSpec||{});const details=$('advancedSettings');if(details)details.open=true;$('create').scrollIntoView({behavior:'smooth'});status.textContent='Дизайн перенесён в настройки проекта. Теперь можно перейти к сборке CC.';});
 
 function updateBuildChecks(){if($('checkTexture'))$('checkTexture').checked=!!projectRuntime.textureFile;const ready=!!aiDesign;const button=$('buildPackage');if(button)button.disabled=!ready;if($('packageState'))$('packageState').textContent=ready?'SPEC READY':'WAITING';}
 $('checkCas')?.addEventListener('change',updateBuildChecks);
