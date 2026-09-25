@@ -55,6 +55,7 @@
         </div>
       </div>
       <div class="tip">💡 Поддерживаются изображения для дизайна и 3D-модели для предпросмотра.</div>
+      <div class="texture-tools"><div><strong>Текстура модели</strong><small>PNG / JPG / WEBP · применяется к материалам 3D-модели</small></div><label class="secondary small-button" for="textureInput">Загрузить текстуру</label><input id="textureInput" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
       <div class="model-upload">
         <div><strong>3D-модель одежды</strong><small>GLB / GLTF / OBJ · до 30 MB</small></div>
         <label class="secondary small-button" for="modelInput">Загрузить модель</label>
@@ -133,10 +134,12 @@
       <div id="viewportEmpty" class="viewport-empty"><span>3D</span><strong>Загрузи GLB, GLTF или OBJ</strong><small>Модель появится здесь и её можно будет вращать мышью.</small></div>
       <div class="viewport-loading hidden" id="viewportLoading">Загрузка модели…</div>
     </div>
+    <div class="material-controls"><label>Материал <input id="roughness" type="range" min="0" max="1" step="0.01" value="0.45"><span id="roughnessValue">0.45</span></label><label>Металл <input id="metalness" type="range" min="0" max="1" step="0.01" value="0.05"><span id="metalnessValue">0.05</span></label></div>
     <div class="viewport-toolbar">
       <button type="button" id="resetView">Сбросить вид</button>
       <button type="button" id="frontView">Вид спереди</button>
       <button type="button" id="autoRotate">Автовращение</button>
+      <button type="button" id="toggleWireframe">Wireframe</button>
     </div>
   </div>
   <p class="tip">3D-просмотр работает прямо в браузере. Это предпросмотр модели, а не готовый Sims 4 .package.</p>
