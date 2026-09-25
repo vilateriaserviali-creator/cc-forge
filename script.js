@@ -112,3 +112,37 @@ document.getElementById('exportProject').addEventListener('click',()=>{
   const data=getData(),m=inspectModel(),payload={tool:'CC Forge',version:'0.3',project:data,model:m.ok?{name:projectRuntime.modelFile?.name||'loaded',size:projectRuntime.modelFile?.size||null,meshes:m.meshes,materials:m.materials,uvMeshes:m.uv,normalsMeshes:m.normals,triangles:Math.round(m.triangles)}:null,texture:projectRuntime.textureMeta,lods:Object.fromEntries(Object.entries(projectRuntime.lods).map(([k,v])=>[k,v?{name:v.name,size:v.size}:null])),note:'JSON проекта и диагностика. Это не Sims 4 .package.'};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(data.name||'cc-forge-project').replace(/[^a-z0-9а-яё_-]+/gi,'-').toLowerCase()+'.json';a.click();URL.revokeObjectURL(url);status.textContent='Проект экспортирован в JSON.';
 });
+
+
+const aiPhotoInput=document.getElementById('aiPhotoInput'),aiPhotoPreview=document.getElementById('aiPhotoPreview'),aiPhoto=document.getElementById('aiPhoto'),aiDescription=document.getElementById('aiDescription'),aiResult=document.getElementById('aiResult'),aiResultState=document.getElementById('aiResultState'),applyDesign=document.getElementById('applyDesign');
+let aiPhotoData=null,aiDesign=null;
+aiPhotoInput.addEventListener('change',e=>{
+ const file=e.target.files[0]; if(!file)return;
+ if(file.size>10*1024*1024){status.textContent='Фото больше 10 MB.';return;}
+ const reader=new FileReader(); reader.onload=()=>{aiPhotoData=reader.result;aiPhoto.src=aiPhotoData;aiPhotoPreview.classList.remove('hidden');status.textContent='Фото одежды добавлено.';};reader.readAsDataURL(file);
+});
+document.getElementById('removeAiPhoto').addEventListener('click',()=>{aiPhotoData=null;aiPhoto.src='';aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';});
+document.getElementById('clearDesign').addEventListener('click',()=>{aiDescription.value='';aiPhotoData=null;aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';aiResult.innerHTML='<span class="ai-placeholder">Здесь появится структура дизайна: тип, силуэт, детали, цвета, материал и стиль.</span>';aiResultState.textContent='WAITING';applyDesign.classList.add('hidden');});
+function inferDesign(text){
+ const t=text.toLowerCase();
+ const type=t.includes('плать')?'Платье':t.includes('юбк')?'Юбка':t.includes('брюк')?'Брюки':t.includes('шорт')?'Шорты':t.includes('куртк')?'Куртка':t.includes('свитер')?'Свитер':t.includes('футбол')?'Футболка':'Топ';
+ const style=t.includes('гот')||t.includes('goth')?'Gothic':t.includes('y2k')?'Y2K':t.includes('кокет')?'Coquette':t.includes('street')?'Streetwear':t.includes('миним')?'Minimal':t.includes('casual')?'Casual':'Dark Feminine';
+ const colors=['чёрн','черн','black'].some(x=>t.includes(x))?'Чёрный':t.includes('бел')?'Белый':t.includes('крас')||t.includes('бордов')?'Бордовый':t.includes('роз')?'Розовый':t.includes('зел')?'Зелёный':t.includes('син')?'Синий':'По референсу';
+ const details=[];['длинн','коротк','открыт','цеп','шнур','кружев','карман','пугов','молни','асиммет','облега'].forEach(k=>{if(t.includes(k))details.push(k==='длинн'?'длинные элементы':k==='коротк'?'короткие элементы':k==='открыт'?'открытые зоны':k==='цеп'?'цепочки':k==='шнур'?'шнуровка':k==='кружев'?'кружево':k==='карман'?'карманы':k==='пугов'?'пуговицы':k==='молни'?'молния':k==='асиммет'?'асимметрия':'облегающий силуэт');});
+ return {type,style,colors,details:details.length?details:['детали определяются по референсу'],source:aiPhotoData?'Фото + описание':'Описание'};
+}
+document.getElementById('analyzeDesign').addEventListener('click',()=>{
+ const text=aiDescription.value.trim();
+ if(!text&&!aiPhotoData){status.textContent='Добавь фото, описание или оба источника.';return;}
+ aiDesign=inferDesign(text);
+ aiResultState.textContent='READY';
+ aiResult.innerHTML='<div class="design-summary"><div><b>Источник</b><span>'+escapeHtml(aiDesign.source)+'</span></div><div><b>Тип</b><span>'+aiDesign.type+'</span></div><div><b>Стиль</b><span>'+aiDesign.style+'</span></div><div><b>Цвет</b><span>'+aiDesign.colors+'</span></div><div><b>Детали</b><span>'+escapeHtml(aiDesign.details.join(', '))+'</span></div><div><b>Описание</b><span>'+escapeHtml(text||'Анализ по фотографии')+'</span></div></div>';
+ applyDesign.classList.remove('hidden');status.textContent='Дизайн сформирован. Можно применить его к проекту.';
+});
+applyDesign.addEventListener('click',()=>{
+ if(!aiDesign)return;
+ const typeButton=[...document.querySelectorAll('#types .chip')].find(x=>x.dataset.value===aiDesign.type);if(typeButton){document.querySelectorAll('#types .chip').forEach(x=>x.classList.remove('active'));typeButton.classList.add('active');}
+ const styleSelect=document.getElementById('style');const opt=[...styleSelect.options].find(x=>x.text.toLowerCase()===aiDesign.style.toLowerCase());if(opt)styleSelect.value=opt.text;
+ if(aiDescription.value.trim())document.getElementById('description').value=aiDescription.value.trim();
+ document.getElementById('create').scrollIntoView({behavior:'smooth'});status.textContent='Дизайн применён к проекту.';
+});
