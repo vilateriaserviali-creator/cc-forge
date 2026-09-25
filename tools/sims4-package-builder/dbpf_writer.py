@@ -101,9 +101,10 @@ def build_package(resources: list[Resource]) -> bytes:
     for entry in entries:
         index.extend(
             struct.pack(
-                "<IIIQIIHH",
+                "<IIIIIIIHH",
                 entry.type_id,
                 entry.group_id,
+                (entry.instance_id >> 32) & 0xFFFFFFFF,
                 (entry.instance_id >> 32) & 0xFFFFFFFF,
                 entry.instance_id & 0xFFFFFFFF,
                 entry.offset,
