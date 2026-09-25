@@ -23,8 +23,8 @@
   <div>
     <p class="eyebrow">CLOTHING FORGE · THE SIMS 4</p>
     <h1>Создавай<br><em>свою одежду.</em></h1>
-    <p class="hero-text">Загрузи обычную фотографию одежды или просто опиши свою идею. CC Forge превращает её в дизайн одежды в стиле Maxis Match и ведёт проект к настоящему Sims 4 CC.</p>
-    <a class="primary" href="#create">Начать создание <span>→</span></a>
+    <p class="hero-text">Загрузи обычную фотографию одежды или просто опиши свою идею. CC Forge создаст Maxis Match дизайн, заполнит параметры проекта и проведёт его дальше по пути к настоящему Sims 4 CC.</p>
+    <a class="primary" href="#aiForge">Начать создание <span>→</span></a>
   </div>
   <div class="hero-card">
     <div class="fashion-shape"><div class="shape-detail"></div></div>
@@ -36,8 +36,8 @@
 <section id="aiForge" class="section ai-forge">
   <div class="section-heading">
     <p class="eyebrow">00 / AI DESIGN</p>
-    <h2>Создай одежду по фото или описанию</h2>
-    <p>Загрузи фотографию, напиши идею или используй оба источника сразу. AI создаст визуальный концепт одежды и покажет процесс генерации прямо здесь.</p>
+    <h2>1. Дай CC Forge фото или идею</h2>
+    <p>Загрузи фотографию, напиши идею или используй оба источника сразу. Фото и описание необязательны вместе: можно использовать что-то одно или сразу оба источника. AI создаст Maxis Match концепт и структурированную спецификацию одежды.</p>
   </div>
   <div class="ai-grid">
     <div class="ai-source">
@@ -50,12 +50,12 @@
       <div id="aiPhotoPreview" class="ai-photo-preview hidden"><img id="aiPhoto" alt="Фото одежды"><button id="removeAiPhoto" type="button">Удалить фото ×</button></div>
       <label for="aiDescription">Описание или пожелания</label>
       <textarea id="aiDescription" placeholder="Например: чёрный облегающий топ с открытыми плечами, длинными рукавами и серебряными цепочками в готическом стиле..."></textarea>
-      </div><div class="ai-actions"><button class="generate" id="analyzeDesign" type="button">✨ Создать дизайн</button><button class="secondary" id="clearDesign" type="button">Очистить</button></div>
+      </div><div class="ai-actions"><button class="generate" id="analyzeDesign" type="button">✨ Создать одежду</button><button class="secondary" id="clearDesign" type="button">Очистить</button></div>
     </div>
     <div class="ai-result">
       <div class="panel-head"><strong>AI CLOTHING PREVIEW</strong><span id="aiResultState" class="counter">WAITING</span></div>
       <div id="aiResult" class="ai-result-content"><span class="ai-placeholder">Здесь появится процесс создания одежды и готовый визуальный дизайн.</span></div>
-      <button class="secondary apply-design hidden" id="applyDesign" type="button">Применить к проекту</button>
+      <button class="secondary apply-design hidden" id="applyDesign" type="button">Продолжить с этим дизайном →</button>
     </div>
   </div>
 </section>
@@ -83,47 +83,37 @@
 </section>
 
 <section id="create" class="section creator">
-  <div class="section-heading">
-    <p class="eyebrow">01 / CLOTHING</p>
-    <h2>Создай предмет одежды</h2>
-    <p>Сначала создаём структуру и дизайн. Подготовь описание, CAS-параметры и варианты цвета.</p>
+  <div class="section-heading inline">
+    <div>
+      <p class="eyebrow">02 / PROJECT SETTINGS</p>
+      <h2>Настрой будущий CC</h2>
+      <p>После AI-дизайна параметры заполнятся автоматически. Здесь можно изменить их вручную перед сборкой.</p>
+    </div>
+    <span class="counter">OPTIONAL</span>
   </div>
 
-  <div class="creator-grid">
-    <div>
-      <div class="upload-box" id="dropZone">
-        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
-        <div id="uploadContent">
-          <div class="upload-icon">＋</div>
-          <h3>Добавь референс или текстуру</h3>
-          <p>Перетащи изображение сюда<br>или <label for="fileInput">выбери файл</label></p>
-          <small>PNG, JPG или WEBP · до 10 MB</small>
-        </div>
-        <div id="previewWrap" class="preview-wrap hidden">
-          <img id="preview" alt="Предпросмотр">
-          <button id="removeImage" type="button">Удалить ×</button>
-        </div>
-      </div>
-      <div class="tip">💡 Поддерживаются изображения для дизайна и текстуры.</div>
-      </div>
-    </div>
+  <details class="advanced-settings" id="advancedSettings">
+    <summary>
+      <span><strong>Дополнительные настройки</strong><small>Тип, CAS, стиль, возраст и цвета</small></span>
+      <b>Открыть</b>
+    </summary>
 
     <div class="form-panel">
-      <div class="form-title"><span>Настройки проекта</span><small id="projectState">DRAFT</small></div>
+      <div class="form-title"><span>Параметры проекта</span><small id="projectState">DRAFT</small></div>
 
       <label for="name">Название</label>
       <input class="text-input" id="name" placeholder="Например: NOIRÉ Corset">
 
       <label>Тип одежды</label>
       <div class="chips" id="types">
-        <button class="chip active" data-value="Топ">Топ</button>
-        <button class="chip" data-value="Платье">Платье</button>
-        <button class="chip" data-value="Футболка">Футболка</button>
-        <button class="chip" data-value="Свитер">Свитер</button>
-        <button class="chip" data-value="Юбка">Юбка</button>
-        <button class="chip" data-value="Брюки">Брюки</button>
-        <button class="chip" data-value="Шорты">Шорты</button>
-        <button class="chip" data-value="Куртка">Куртка</button>
+        <button class="chip active" data-value="Топ" type="button">Топ</button>
+        <button class="chip" data-value="Платье" type="button">Платье</button>
+        <button class="chip" data-value="Футболка" type="button">Футболка</button>
+        <button class="chip" data-value="Свитер" type="button">Свитер</button>
+        <button class="chip" data-value="Юбка" type="button">Юбка</button>
+        <button class="chip" data-value="Брюки" type="button">Брюки</button>
+        <button class="chip" data-value="Шорты" type="button">Шорты</button>
+        <button class="chip" data-value="Куртка" type="button">Куртка</button>
       </div>
 
       <div class="two-cols">
@@ -153,34 +143,30 @@
 
       <label>Цветовые варианты</label>
       <div class="swatches" id="swatches">
-        <button class="swatch active" data-color="#16131a" style="--swatch:#16131a" aria-label="Чёрный"></button>
-        <button class="swatch" data-color="#f2edf3" style="--swatch:#f2edf3" aria-label="Белый"></button>
-        <button class="swatch" data-color="#8d657f" style="--swatch:#8d657f" aria-label="Лиловый"></button>
-        <button class="swatch" data-color="#5d6678" style="--swatch:#5d6678" aria-label="Серо-синий"></button>
-        <button class="swatch" data-color="#b43f63" style="--swatch:#b43f63" aria-label="Бордовый"></button>
-        <button class="swatch" data-color="#d9a7bd" style="--swatch:#d9a7bd" aria-label="Розовый"></button>
-        <button class="swatch" data-color="#4f6b57" style="--swatch:#4f6b57" aria-label="Зелёный"></button>
-        <button class="swatch" data-color="#b08a4a" style="--swatch:#b08a4a" aria-label="Золотой"></button>
+        <button class="swatch active" data-color="#16131a" style="--swatch:#16131a" aria-label="Чёрный" type="button"></button>
+        <button class="swatch" data-color="#f2edf3" style="--swatch:#f2edf3" aria-label="Белый" type="button"></button>
+        <button class="swatch" data-color="#8d657f" style="--swatch:#8d657f" aria-label="Лиловый" type="button"></button>
+        <button class="swatch" data-color="#5d6678" style="--swatch:#5d6678" aria-label="Серо-синий" type="button"></button>
+        <button class="swatch" data-color="#b43f63" style="--swatch:#b43f63" aria-label="Бордовый" type="button"></button>
+        <button class="swatch" data-color="#d9a7bd" style="--swatch:#d9a7bd" aria-label="Розовый" type="button"></button>
+        <button class="swatch" data-color="#4f6b57" style="--swatch:#4f6b57" aria-label="Зелёный" type="button"></button>
+        <button class="swatch" data-color="#b08a4a" style="--swatch:#b08a4a" aria-label="Золотой" type="button"></button>
         <button class="swatch add-swatch" id="addSwatch" type="button">+</button>
       </div>
+
       <div class="variant-bar">
         <div><strong>Варианты</strong><small id="variantHint">Выбранный цвет можно сохранить как отдельный swatch.</small></div>
         <button class="secondary small-button" id="saveVariant" type="button">Сохранить цвет</button>
-      </div>
       </div>
 
       <div class="actions">
         <button class="secondary" id="saveProject" type="button">Сохранить проект</button>
         <button class="generate" id="generate" type="button">✨ Создать концепт</button>
       </div>
-      <div id="status" class="status">Проект готов к настройке.</div>
+      <div id="status" class="status">Сначала создай одежду по фото или описанию выше.</div>
     </div>
-  </div>
+  </details>
 </section>
-
-
-
-
 
 <section id="build" class="section cc-build">
   <div class="section-heading inline">
