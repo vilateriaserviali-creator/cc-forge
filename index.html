@@ -23,7 +23,7 @@
   <div>
     <p class="eyebrow">CLOTHING FORGE · THE SIMS 4</p>
     <h1>Создавай<br><em>свою одежду.</em></h1>
-    <p class="hero-text">Создай концепт одежды для The Sims 4: выбери основу, настрой CAS-параметры, добавь текстуру и подготовь проект к следующему этапу — mesh и .package.</p>
+    <p class="hero-text">Загрузи обычную фотографию одежды или просто опиши свою идею. CC Forge превращает её в дизайн одежды в стиле Maxis Match и ведёт проект к настоящему Sims 4 CC.</p>
     <a class="primary" href="#create">Начать создание <span>→</span></a>
   </div>
   <div class="hero-card">
@@ -184,7 +184,7 @@
 
 <section id="build" class="section cc-build">
   <div class="section-heading inline">
-    <div><p class="eyebrow">03 / CC BUILD</p><h2>Собери настоящий Sims 4 CC</h2><p>CC Forge работает в направлении Maxis Match: дизайн → текстура → базовый Sims 4 mesh → CAS → .package.</p></div>
+    <div><p class="eyebrow">03 / CC BUILD</p><h2>От дизайна до Sims 4 CC</h2><p>Тебе не нужен готовый мод. CC Forge использует фото или описание как исходную идею и готовит проект по цепочке: дизайн → текстура → mesh → CAS → .package.</p></div>
     <span class="counter">MAXIS MATCH</span>
   </div>
   <div class="build-grid">
@@ -196,13 +196,13 @@
   </div>
   <div class="package-builder">
     <div class="package-source">
-      <div class="panel-head"><strong>Основа для первого CC</strong><span id="packageState" class="counter">WAITING</span></div>
-      <label class="package-upload" for="basePackageInput">
-        <input id="basePackageInput" type="file" accept=".package" hidden>
+      <div class="panel-head"><strong>Исходник дизайна</strong><span id="packageState" class="counter">WAITING</span></div>
+      <div class="package-upload package-design-source">
+        <span class="upload-icon">✦</span>
         <span class="upload-icon">＋</span>
-        <strong>Загрузить базовый .package</strong>
-        <small>Используй свой Sims 4 CC-пакет с одеждой как основу для первого Maxis Match recolor.</small>
-      </label>
+        <strong>Фото или описание — этого достаточно</strong>
+        <small>Готовый Sims 4 .package загружать не нужно. CC Forge использует созданный Maxis Match дизайн как основу для дальнейшей сборки.</small>
+      <button class="secondary" id="goToAi" type="button">Создать дизайн</button></div>
       <div id="basePackageInfo" class="package-info hidden"></div>
       <p class="tip">Для реального .package CC Forge должен работать с настоящими Sims 4 ресурсами. Мы не создаём фальшивый файл, который игра не сможет открыть.</p>
     </div>
@@ -215,7 +215,7 @@
         <label><input id="checkCas" type="checkbox"> CAS параметры</label>
       </div>
       <button class="generate" id="buildPackage" type="button" disabled>📦 Собрать .package</button>
-      <div id="packageBuildStatus" class="status">Сначала выбери текстуру и загрузи базовый .package.</div>
+      <div id="packageBuildStatus" class="status">Сначала создай дизайн по фото или описанию.</div>
     </div>
   </div>
 </section>
