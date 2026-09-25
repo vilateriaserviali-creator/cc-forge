@@ -72,7 +72,7 @@ export default {
           "Authorization": "Bearer " + env.OPENAI_API_KEY
         },
         body: JSON.stringify({
-          model: "gpt-5.6-luna",
+          model: "gpt-5.1",
           input: [{ role: "user", content }],
           tools: [{
             type: "image_generation",
