@@ -64,3 +64,11 @@ footer{padding:35px 9vw;border-top:1px solid #201e23;display:flex;justify-conten
 .tex-lace{background-color:#d8c8da;background-image:radial-gradient(circle at 4px 4px,#7f617f 1.5px,transparent 2px),radial-gradient(circle at 10px 10px,#7f617f 1.5px,transparent 2px);background-size:12px 12px}
 .template-icon{height:70px;border-radius:10px;display:grid;place-items:center;background:radial-gradient(circle,#4b3851,#18131d);color:#d9c7de;font-size:13px;font-weight:900;letter-spacing:2px}
 @media(max-width:800px){.asset-columns{grid-template-columns:1fr}.texture-presets,.clothing-templates{grid-template-columns:repeat(2,1fr)}}
+
+
+.texture-selection{margin-top:14px;padding:12px;border:1px solid #29252d;border-radius:14px;background:#0d0c10;display:flex;align-items:center;gap:12px}
+.selected-texture-preview{width:64px;height:64px;flex:0 0 64px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background-size:18px 18px}
+.texture-selection>div{flex:1}.texture-selection strong,.texture-selection small{display:block}.texture-selection small{color:#716b75;font-size:10px;margin-top:3px}
+.texture-selection .small-button{width:auto}
+.texture-preset.active{border-color:#b998c7;box-shadow:0 0 0 1px #73567b inset}
+@media(max-width:800px){.texture-selection{align-items:flex-start;flex-wrap:wrap}.texture-selection>div{min-width:150px}.texture-selection .small-button{width:100%}}
