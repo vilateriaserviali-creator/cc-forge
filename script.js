@@ -121,12 +121,12 @@ $('analyzeDesign')?.addEventListener('click',async()=>{
     status.textContent='Maxis Match дизайн и параметры одежды готовы. Проверь дополнительные настройки, если хочешь их изменить.';
   }catch(error){console.error(error);aiResultState.textContent='ERROR';aiResult.innerHTML='<span class="ai-placeholder">Не удалось создать дизайн: '+escapeHtml(error.message)+'</span>';status.textContent='Ошибка AI: '+error.message;}
 });
-applyDesign?.addEventListener('click',()=>{if(!aiDesign)return;applyGarmentSpec(aiDesign.garmentSpec||{});const details=$('advancedSettings');if(details)details.open=true;$('create').scrollIntoView({behavior:'smooth'});status.textContent='Дизайн перенесён в настройки проекта. Теперь можно перейти к сборке CC.';});
+applyDesign?.addEventListener('click',()=>{if(!aiDesign)return;applyGarmentSpec(aiDesign.garmentSpec||{});const details=$('advancedSettings');if(details)details.open=true;$('create').scrollIntoView({behavior:'smooth'});status.textContent='Параметры уже заполнены AI. Здесь можно только при необходимости внести ручные изменения.';});
 
 function updateBuildChecks(){if($('checkTexture'))$('checkTexture').checked=!!projectRuntime.textureFile;const ready=!!aiDesign;const button=$('buildPackage');if(button)button.disabled=!ready;if($('packageState'))$('packageState').textContent=ready?'SPEC READY':'WAITING';}
 $('checkCas')?.addEventListener('change',updateBuildChecks);
 $('goToAi')?.addEventListener('click',()=>{$('aiForge')?.scrollIntoView({behavior:'smooth'});});
-$('buildPackage')?.addEventListener('click',()=>{if(!aiDesign){status.textContent='Сначала создай дизайн по фото или описанию.';$('aiForge')?.scrollIntoView({behavior:'smooth'});return;}$('packageBuildStatus').textContent='Дизайн принят. Следующий этап — автоматическая генерация Sims 4 mesh, CAS и настоящего .package.';status.textContent='Дизайн подготовлен к сборке Sims 4 CC.';});
+$('buildPackage')?.addEventListener('click',()=>{if(!aiDesign){status.textContent='Сначала создай дизайн по фото или описанию.';$('aiForge')?.scrollIntoView({behavior:'smooth'});return;}$('packageBuildStatus').textContent='Дизайн готов. Реальная сборка .package будет запущена после подключения генерации mesh, CAS и DBPF-ресурсов.';status.textContent='Дизайн подготовлен к следующему этапу сборки Sims 4 CC.';});
 updateBuildChecks();
 
 const saved=localStorage.getItem('ccForgeProject');if(saved){try{const d=JSON.parse(saved);$('name').value=d.name==='Новый предмет'?'':d.name;$('description').value=d.description||'';$('projectState').textContent='SAVED';}catch{}}
