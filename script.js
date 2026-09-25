@@ -149,7 +149,7 @@ applyDesign.addEventListener('click',()=>{
 
 
 /* Built-in clothing templates + texture presets */
-function makeMaterial(){return new THREE.MeshStandardMaterial({color:document.getElementById('modelColor')?.value||'#16131a',roughness:Number(document.getElementById('roughness')?.value||.45),metalness:Number(document.getElementById('metalness')?.value||.05},side:THREE.DoubleSide});}
+function makeMaterial(){return new THREE.MeshStandardMaterial({color:document.getElementById('modelColor')?.value||'#16131a',roughness:Number(document.getElementById('roughness')?.value||.45),metalness:Number(document.getElementById('metalness')?.value||.05),side:THREE.DoubleSide});}
 function addSleeve(group,x,angle=0){
   const sleeve=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,.95,24),makeMaterial());
   sleeve.position.set(x,.72,0);sleeve.rotation.z=angle;group.add(sleeve);
