@@ -104,7 +104,22 @@ document.querySelectorAll('.texture-preset').forEach(button=>button.addEventList
 $('downloadTexture')?.addEventListener('click',()=>{if(!selectedPresetTexture)return;const url=URL.createObjectURL(selectedPresetTexture),a=document.createElement('a');a.href=url;a.download=selectedPresetTexture.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);});
 
 const aiPhotoInput=$('aiPhotoInput'),aiPhotoPreview=$('aiPhotoPreview'),aiPhoto=$('aiPhoto'),aiDescription=$('aiDescription'),aiResult=$('aiResult'),aiResultState=$('aiResultState'),applyDesign=$('applyDesign');
-aiPhotoInput?.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(file.size>10*1024*1024){status.textContent='Фото больше 10 MB.';return;}const reader=new FileReader();reader.onload=()=>{aiPhotoData=reader.result;aiPhoto.src=aiPhotoData;aiPhotoPreview.classList.remove('hidden');status.textContent='Фото одежды добавлено.';};reader.readAsDataURL(file);});
+$('aiUpload')?.addEventListener('click',()=>aiPhotoInput?.click());
+aiPhotoInput?.addEventListener('change',e=>{
+  const file=e.target.files?.[0];
+  if(!file)return;
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){status.textContent='Выбери PNG, JPG или WEBP.';e.target.value='';return;}
+  if(file.size>10*1024*1024){status.textContent='Фото больше 10 MB.';e.target.value='';return;}
+  const reader=new FileReader();
+  reader.onload=()=>{
+    aiPhotoData=reader.result;
+    aiPhoto.src=aiPhotoData;
+    aiPhotoPreview.classList.remove('hidden');
+    status.textContent='Фото одежды добавлено.';
+  };
+  reader.onerror=()=>{status.textContent='Не удалось прочитать фото.';};
+  reader.readAsDataURL(file);
+});
 $('removeAiPhoto')?.addEventListener('click',()=>{aiPhotoData=null;aiPhoto.src='';aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';});
 $('clearDesign')?.addEventListener('click',()=>{aiDescription.value='';aiPhotoData=null;aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';aiResult.innerHTML='<span class="ai-placeholder">Здесь появится процесс создания одежды и готовый визуальный дизайн.</span>';aiResultState.textContent='WAITING';applyDesign.classList.add('hidden');});
 $('analyzeDesign')?.addEventListener('click',async()=>{
