@@ -3,28 +3,13 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
-const dropZone=document.getElementById('dropZone');
-const fileInput=document.getElementById('fileInput');
-const uploadContent=document.getElementById('uploadContent');
-const previewWrap=document.getElementById('previewWrap');
-const preview=document.getElementById('preview');
-const removeImage=document.getElementById('removeImage');
-const status=document.getElementById('status');
-const projectList=document.getElementById('projectList');
-const projectCount=document.getElementById('projectCount');
-const nameInput=document.getElementById('name');
-const modelInput=document.getElementById('modelInput');
-const viewport=document.getElementById('threeViewport');
-const viewportEmpty=document.getElementById('viewportEmpty');
-const viewportLoading=document.getElementById('viewportLoading');
-const modelState=document.getElementById('modelState');
+const dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),uploadContent=document.getElementById('uploadContent'),previewWrap=document.getElementById('previewWrap'),preview=document.getElementById('preview'),removeImage=document.getElementById('removeImage'),status=document.getElementById('status'),projectList=document.getElementById('projectList'),projectCount=document.getElementById('projectCount'),nameInput=document.getElementById('name');
+const modelInput=document.getElementById('modelInput'),textureInput=document.getElementById('textureInput'),viewport=document.getElementById('threeViewport'),viewportEmpty=document.getElementById('viewportEmpty'),viewportLoading=document.getElementById('viewportLoading'),modelState=document.getElementById('modelState');
 
 function showFile(file){
-  if(!file || !file.type.startsWith('image/')) return;
+  if(!file||!file.type.startsWith('image/'))return;
   if(file.size>10*1024*1024){status.textContent='Изображение больше 10 MB.';return;}
-  const reader=new FileReader();
-  reader.onload=()=>{preview.src=reader.result;uploadContent.classList.add('hidden');previewWrap.classList.remove('hidden');status.textContent='Изображение добавлено.';};
-  reader.readAsDataURL(file);
+  const reader=new FileReader(); reader.onload=()=>{preview.src=reader.result;uploadContent.classList.add('hidden');previewWrap.classList.remove('hidden');status.textContent='Изображение добавлено.';}; reader.readAsDataURL(file);
 }
 fileInput.addEventListener('change',e=>showFile(e.target.files[0]));
 ['dragenter','dragover'].forEach(ev=>dropZone.addEventListener(ev,e=>{e.preventDefault();dropZone.classList.add('drag')}));
@@ -32,87 +17,37 @@ fileInput.addEventListener('change',e=>showFile(e.target.files[0]));
 dropZone.addEventListener('drop',e=>showFile(e.dataTransfer.files[0]));
 removeImage.addEventListener('click',()=>{preview.src='';previewWrap.classList.add('hidden');uploadContent.classList.remove('hidden');fileInput.value='';status.textContent='Изображение удалено.'});
 
-document.querySelectorAll('#types .chip').forEach(chip=>chip.addEventListener('click',()=>{
-  document.querySelectorAll('#types .chip').forEach(c=>c.classList.remove('active'));
-  chip.classList.add('active');
-}));
+document.querySelectorAll('#types .chip').forEach(chip=>chip.addEventListener('click',()=>{document.querySelectorAll('#types .chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');}));
+document.querySelectorAll('.swatch:not(.add-swatch)').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');status.textContent='Основной цвет выбран.';}));
+document.getElementById('addSwatch').addEventListener('click',()=>{const value=prompt('Введи HEX-цвет, например #d7b7d9');if(!value||!/^#[0-9a-fA-F]{6}$/.test(value.trim())){status.textContent='Нужен HEX-цвет формата #RRGGBB.';return;}const s=document.createElement('button');s.type='button';s.className='swatch';s.style.setProperty('--swatch',value.trim());s.dataset.color=value.trim();s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');});document.getElementById('swatches').insertBefore(s,document.getElementById('addSwatch'));status.textContent='Новый swatch добавлен.';});
 
-document.querySelectorAll('.swatch:not(.add-swatch)').forEach(s=>s.addEventListener('click',()=>{
-  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
-  s.classList.add('active'); status.textContent='Основной цвет выбран.';
-}));
-document.getElementById('addSwatch').addEventListener('click',()=>{
-  const value=prompt('Введи HEX-цвет, например #d7b7d9');
-  if(!value || !/^#[0-9a-fA-F]{6}$/.test(value.trim())){status.textContent='Нужен HEX-цвет формата #RRGGBB.';return;}
-  const s=document.createElement('button'); s.type='button'; s.className='swatch'; s.style.setProperty('--swatch',value.trim()); s.dataset.color=value.trim();
-  s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');});
-  document.getElementById('swatches').insertBefore(s,document.getElementById('addSwatch')); status.textContent='Новый swatch добавлен.';
-});
-
-function getData(){
-  return {name:nameInput.value.trim()||'Новый предмет',type:document.querySelector('#types .chip.active').dataset.value,gender:document.getElementById('gender').value,age:document.getElementById('age').value,style:document.getElementById('style').value,category:document.getElementById('category').value,description:document.getElementById('description').value.trim(),swatches:document.querySelectorAll('.swatch:not(.add-swatch)').length};
-}
-function addProject(data){
-  const card=document.createElement('div'); card.className='project-card';
-  card.innerHTML='<div class="project-image"><span>NEW CC</span></div><div class="project-info"><p>'+data.type+' · '+data.gender+' · '+data.age+'</p><h3>'+escapeHtml(data.name)+'</h3><span>'+data.style+' · '+data.swatches+' swatches · Draft</span></div><button class="more" type="button">•••</button>';
-  projectList.prepend(card); projectCount.textContent=projectList.querySelectorAll('.project-card').length+' проекта';
-}
+function getData(){return{name:nameInput.value.trim()||'Новый предмет',type:document.querySelector('#types .chip.active').dataset.value,gender:document.getElementById('gender').value,age:document.getElementById('age').value,style:document.getElementById('style').value,category:document.getElementById('category').value,description:document.getElementById('description').value.trim(),swatches:document.querySelectorAll('.swatch:not(.add-swatch)').length};}
+function addProject(data){const card=document.createElement('div');card.className='project-card';card.innerHTML='<div class="project-image"><span>NEW CC</span></div><div class="project-info"><p>'+data.type+' · '+data.gender+' · '+data.age+'</p><h3>'+escapeHtml(data.name)+'</h3><span>'+data.style+' · '+data.swatches+' swatches · Draft</span></div><button class="more" type="button">•••</button>';projectList.prepend(card);projectCount.textContent=projectList.querySelectorAll('.project-card').length+' проекта';}
 function escapeHtml(value){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));}
-document.getElementById('saveProject').addEventListener('click',()=>{const data=getData();localStorage.setItem('ccForgeProject',JSON.stringify(data));document.getElementById('projectState').textContent='SAVED';status.textContent='Проект сохранён в этом браузере.';});
+document.getElementById('saveProject').addEventListener('click',()=>{localStorage.setItem('ccForgeProject',JSON.stringify(getData()));document.getElementById('projectState').textContent='SAVED';status.textContent='Проект сохранён в этом браузере.';});
 document.getElementById('generate').addEventListener('click',()=>{const data=getData();if(!data.description&&previewWrap.classList.contains('hidden')){status.textContent='Добавь референс/текстуру или описание дизайна.';return;}addProject(data);document.getElementById('projectState').textContent='CONCEPT';status.textContent='Концепт создан. 3D-просмотр доступен ниже.';document.getElementById('forge3d').scrollIntoView({behavior:'smooth'});});
 
-let scene,camera,renderer,controls,model=null,animationId=null,autoRotate=false;
-function init3D(){
-  scene=new THREE.Scene();
-  camera=new THREE.PerspectiveCamera(45,viewport.clientWidth/viewport.clientHeight,.01,1000);
-  camera.position.set(0,1.2,3.2);
-  renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(viewport.clientWidth,viewport.clientHeight);
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  viewport.appendChild(renderer.domElement);
-  controls=new OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true; controls.target.set(0,1,0);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x211a28,2.1));
-  const key=new THREE.DirectionalLight(0xffffff,3); key.position.set(3,5,4); scene.add(key);
-  const fill=new THREE.DirectionalLight(0xc9a6d6,1.4); fill.position.set(-4,2,2); scene.add(fill);
-  const grid=new THREE.GridHelper(6,24,0x332c37,0x1b1820); grid.position.y=0; scene.add(grid);
-  animate();
-}
-function animate(){animationId=requestAnimationFrame(animate);if(model&&autoRotate)model.rotation.y+=0.008;controls.update();renderer.render(scene,camera);}
+let scene,camera,renderer,controls,model=null,autoRotate=false,wireframe=false;
+function init3D(){scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(45,viewport.clientWidth/viewport.clientHeight,.01,1000);camera.position.set(0,1.2,3.2);renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));renderer.setSize(viewport.clientWidth,viewport.clientHeight);renderer.outputColorSpace=THREE.SRGBColorSpace;viewport.appendChild(renderer.domElement);controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,1,0);scene.add(new THREE.HemisphereLight(0xffffff,0x211a28,2.1));const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(3,5,4);scene.add(key);const fill=new THREE.DirectionalLight(0xc9a6d6,1.4);fill.position.set(-4,2,2);scene.add(fill);const grid=new THREE.GridHelper(6,24,0x332c37,0x1b1820);scene.add(grid);animate();}
+function animate(){requestAnimationFrame(animate);if(model&&autoRotate)model.rotation.y+=0.008;controls.update();renderer.render(scene,camera);}
 function clearModel(){if(!model)return;scene.remove(model);model.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>m.dispose&&m.dispose());}});model=null;}
-function frameModel(object){
-  const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());
-  const max=Math.max(size.x,size.y,size.z)||1; object.position.sub(center);
-  const distance=max/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.65;
-  camera.position.set(0,max*.45,distance); controls.target.set(0,0,0); controls.minDistance=max*.25; controls.maxDistance=max*5; controls.update();
-}
-function showModel(object){
-  clearModel(); model=object;
-  model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material)o.material.side=THREE.DoubleSide;}});
-  scene.add(model); frameModel(model); viewportEmpty.classList.add('hidden'); modelState.textContent='MODEL LOADED'; document.getElementById('forge3d').scrollIntoView({behavior:'smooth'}); status.textContent='3D-модель загружена.';
-}
-async function loadModel(file){
-  if(!file)return;
-  const ext=file.name.split('.').pop().toLowerCase();
-  if(!['glb','gltf','obj'].includes(ext)){status.textContent='Поддерживаются только GLB, GLTF и OBJ.';return;}
-  if(file.size>30*1024*1024){status.textContent='3D-модель больше 30 MB.';return;}
-  viewportLoading.classList.remove('hidden'); modelState.textContent='LOADING';
-  try{
-    const url=URL.createObjectURL(file);
-    if(ext==='obj'){const object=await new OBJLoader().loadAsync(url);showModel(object);}
-    else {const result=await new GLTFLoader().loadAsync(url);showModel(result.scene);}
-    URL.revokeObjectURL(url);
-  }catch(error){console.error(error);modelState.textContent='LOAD ERROR';status.textContent='Не удалось открыть модель. Для GLTF лучше использовать .glb.';}
-  finally{viewportLoading.classList.add('hidden');}
-}
+function frameModel(object){const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),max=Math.max(size.x,size.y,size.z)||1;object.position.sub(center);const distance=max/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.65;camera.position.set(0,max*.45,distance);controls.target.set(0,0,0);controls.minDistance=max*.25;controls.maxDistance=max*5;controls.update();}
+function showModel(object){clearModel();model=object;model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{m.side=THREE.DoubleSide;});}}});scene.add(model);frameModel(model);viewportEmpty.classList.add('hidden');modelState.textContent='MODEL LOADED';document.getElementById('forge3d').scrollIntoView({behavior:'smooth'});status.textContent='3D-модель загружена.';}
+async function loadModel(file){if(!file)return;const ext=file.name.split('.').pop().toLowerCase();if(!['glb','gltf','obj'].includes(ext)){status.textContent='Поддерживаются только GLB, GLTF и OBJ.';return;}if(file.size>30*1024*1024){status.textContent='3D-модель больше 30 MB.';return;}viewportLoading.classList.remove('hidden');modelState.textContent='LOADING';try{const url=URL.createObjectURL(file);if(ext==='obj'){showModel(await new OBJLoader().loadAsync(url));}else{showModel((await new GLTFLoader().loadAsync(url)).scene);}URL.revokeObjectURL(url);}catch(error){console.error(error);modelState.textContent='LOAD ERROR';status.textContent='Не удалось открыть модель. Для GLTF лучше использовать .glb.';}finally{viewportLoading.classList.add('hidden');}}
 modelInput.addEventListener('change',e=>loadModel(e.target.files[0]));
+
+const textureLoader=new THREE.TextureLoader();
+function applyTexture(file){if(!model||!file)return;if(file.size>10*1024*1024){status.textContent='Текстура больше 10 MB.';return;}const url=URL.createObjectURL(file);textureLoader.load(url,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{m.map=texture;m.needsUpdate=true;});});status.textContent='Текстура применена к 3D-модели.';URL.revokeObjectURL(url);},undefined,()=>{status.textContent='Не удалось загрузить текстуру.';URL.revokeObjectURL(url);});}
+textureInput.addEventListener('change',e=>{if(!model){status.textContent='Сначала загрузи 3D-модель.';return;}applyTexture(e.target.files[0]);});
+
+function setMaterials(prop,value){if(!model)return;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(prop==='wireframe')m.wireframe=value;else m[prop]=value;m.needsUpdate=true;});});}
+const roughness=document.getElementById('roughness'),metalness=document.getElementById('metalness');
+roughness.addEventListener('input',e=>{document.getElementById('roughnessValue').textContent=Number(e.target.value).toFixed(2);setMaterials('roughness',Number(e.target.value));});
+metalness.addEventListener('input',e=>{document.getElementById('metalnessValue').textContent=Number(e.target.value).toFixed(2);setMaterials('metalness',Number(e.target.value));});
+document.getElementById('toggleWireframe').addEventListener('click',e=>{wireframe=!wireframe;setMaterials('wireframe',wireframe);e.currentTarget.textContent=wireframe?'Обычный вид':'Wireframe';});
 document.getElementById('resetView').addEventListener('click',()=>{if(model)frameModel(model);});
 document.getElementById('frontView').addEventListener('click',()=>{if(!model)return;const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),max=Math.max(size.x,size.y,size.z)||1;camera.position.set(0,max*.35,max*2.1);controls.target.set(0,0,0);controls.update();});
 document.getElementById('autoRotate').addEventListener('click',e=>{autoRotate=!autoRotate;e.currentTarget.textContent=autoRotate?'Остановить вращение':'Автовращение';});
-
 window.addEventListener('resize',()=>{if(!renderer)return;camera.aspect=viewport.clientWidth/viewport.clientHeight;camera.updateProjectionMatrix();renderer.setSize(viewport.clientWidth,viewport.clientHeight);});
 init3D();
-
-const saved=localStorage.getItem('ccForgeProject');
-if(saved){try{const data=JSON.parse(saved);nameInput.value=data.name==='Новый предмет'?'':data.name;status.textContent='Найден сохранённый проект.';}catch(e){}}
+const saved=localStorage.getItem('ccForgeProject');if(saved){try{nameInput.value=JSON.parse(saved).name==='Новый предмет'?'':JSON.parse(saved).name;status.textContent='Найден сохранённый проект.';}catch(e){}}
