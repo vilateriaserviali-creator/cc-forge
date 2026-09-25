@@ -1,6 +1,281 @@
-<div id="textureSelection" class="texture-selection hidden">
-        <span id="selectedTexturePreview" class="selected-texture-preview"></span>
-        <div><strong id="selectedTextureName">Текстура выбрана</strong><small id="selectedTextureInfo">Готова для проекта</small></div>
-        <button id="downloadTexture" class="secondary small-button" type="button">Скачать PNG</button>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC Forge — Clothing Creator</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="#">CC<span>FORGE</span></a>
+  <nav>
+    <a href="#create">Создать одежду</a><a href="#library">Библиотека</a>
+    <a href="#projects">Мои проекты</a>
+    <a href="#how">Как это работает</a>
+  </nav>
+  <button class="profile" type="button">Мой профиль</button>
+</header>
+
+<main>
+<section class="hero">
+  <div>
+    <p class="eyebrow">CLOTHING FORGE · THE SIMS 4</p>
+    <h1>Создавай<br><em>свою одежду.</em></h1>
+    <p class="hero-text">Создай концепт одежды для The Sims 4: выбери основу, настрой CAS-параметры, добавь текстуру и подготовь проект к следующему этапу — mesh и .package.</p>
+    <a class="primary" href="#create">Начать создание <span>→</span></a>
+  </div>
+  <div class="hero-card">
+    <div class="fashion-shape"><div class="shape-detail"></div></div>
+    <div class="floating-tag">CLOTHING FORGE</div>
+    <div class="mini-card"><small>PROJECT</small><strong>NOIRÉ Corset</strong><span>Top · Young Adult · 8 swatches</span></div>
+  </div>
+</section>
+
+<section id="aiForge" class="section ai-forge">
+  <div class="section-heading">
+    <p class="eyebrow">00 / AI DESIGN</p>
+    <h2>Создай одежду по фото или описанию</h2>
+    <p>Загрузи фотографию, напиши идею или используй оба источника сразу. CC Forge соберёт техническое описание дизайна для следующего этапа.</p>
+  </div>
+  <div class="ai-grid">
+    <div class="ai-source">
+      <label class="ai-upload" for="aiPhotoInput">
+        <input id="aiPhotoInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        <span class="upload-icon">＋</span>
+        <strong>Добавить фото одежды</strong>
+        <small>PNG, JPG или WEBP · до 10 MB</small>
+      </label>
+      <div id="aiPhotoPreview" class="ai-photo-preview hidden"><img id="aiPhoto" alt="Фото одежды"><button id="removeAiPhoto" type="button">Удалить фото ×</button></div>
+      <label for="aiDescription">Описание или пожелания</label>
+      <textarea id="aiDescription" placeholder="Например: чёрный облегающий топ с открытыми плечами, длинными рукавами и серебряными цепочками в готическом стиле..."></textarea>
+      </div><div class="ai-actions"><button class="generate" id="analyzeDesign" type="button">✨ Создать дизайн</button><button class="secondary" id="clearDesign" type="button">Очистить</button></div>
+    </div>
+    <div class="ai-result">
+      <div class="panel-head"><strong>Результат анализа</strong><span id="aiResultState" class="counter">WAITING</span></div>
+      <div id="aiResult" class="ai-result-content"><span class="ai-placeholder">Здесь появится структура дизайна: тип, силуэт, детали, цвета, материал и стиль.</span></div>
+      <button class="secondary apply-design hidden" id="applyDesign" type="button">Применить к проекту</button>
+    </div>
+  </div>
+</section>
+
+
+<section id="library" class="section asset-library">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">01 / ASSET LIBRARY</p><h2>Текстуры и модели одежды</h2><p>Готовые стартовые материалы для быстрого создания концепта. Модель можно сразу открыть в 3D-просмотре, а текстуру — применить к ней.</p></div>
+    <span class="counter">STARTER ASSETS</span>
+  </div>
+  <div class="asset-columns">
+    <div class="asset-panel">
+      <div class="panel-head"><strong>Текстуры</strong><span class="counter">6 presets</span></div>
+      <div class="texture-presets" id="texturePresets">
+        <button class="texture-preset" data-texture="black"><span class="texture-preview tex-black"></span><b>Black Cotton</b><small>матовый хлопок</small></button>
+        <button class="texture-preset" data-texture="denim"><span class="texture-preview tex-denim"></span><b>Denim</b><small>джинсовая ткань</small></button>
+        <button class="texture-preset" data-texture="leather"><span class="texture-preview tex-leather"></span><b>Leather</b><small>кожаная поверхность</small></button>
+        <button class="texture-preset" data-texture="satin"><span class="texture-preview tex-satin"></span><b>Satin</b><small>гладкий сатин</small></button>
+        <button class="texture-preset" data-texture="knit"><span class="texture-preview tex-knit"></span><b>Knit</b><small>вязаная фактура</small></button>
+        <button class="texture-preset" data-texture="lace"><span class="texture-preview tex-lace"></span><b>Lace</b><small>кружевной узор</small></button>
       </div>
-      <p class="tip">Нажми на текстуру, чтобы выбрать её. 3D-модель для этого не нужна.</p>
+      <p class="tip">Пресеты создаются прямо в браузере — отдельный файл скачивать не нужно.</p>
+    </div>
+    <div class="asset-panel">
+      <div class="panel-head"><strong>Модели одежды</strong><span class="counter">4 templates</span></div>
+      <div class="clothing-templates" id="clothingTemplates">
+        <button class="clothing-template" data-template="top"><span class="template-icon">TOP</span><b>Basic Top</b><small>базовый топ</small></button>
+        <button class="clothing-template" data-template="dress"><span class="template-icon">DRESS</span><b>Mini Dress</b><small>короткое платье</small></button>
+        <button class="clothing-template" data-template="skirt"><span class="template-icon">SKIRT</span><b>Skirt</b><small>юбка</small></button>
+        <button class="clothing-template" data-template="hoodie"><span class="template-icon">HOOD</span><b>Hoodie</b><small>худи</small></button>
+      </div>
+      <p class="tip">Это стартовые 3D-шаблоны для дизайна и предпросмотра, а не готовые Sims 4 mesh/.package.</p>
+    </div>
+  </div>
+</section>
+
+<section id="create" class="section creator">
+  <div class="section-heading">
+    <p class="eyebrow">01 / CLOTHING</p>
+    <h2>Создай предмет одежды</h2>
+    <p>Сначала создаём структуру и дизайн. 3D-сборка будет следующим этапом.</p>
+  </div>
+
+  <div class="creator-grid">
+    <div>
+      <div class="upload-box" id="dropZone">
+        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+        <div id="uploadContent">
+          <div class="upload-icon">＋</div>
+          <h3>Добавь референс или текстуру</h3>
+          <p>Перетащи изображение сюда<br>или <label for="fileInput">выбери файл</label></p>
+          <small>PNG, JPG или WEBP · до 10 MB</small>
+        </div>
+        <div id="previewWrap" class="preview-wrap hidden">
+          <img id="preview" alt="Предпросмотр">
+          <button id="removeImage" type="button">Удалить ×</button>
+        </div>
+      </div>
+      <div class="tip">💡 Поддерживаются изображения для дизайна и 3D-модели для предпросмотра.</div>
+      <div class="texture-tools"><div><strong>Текстура модели</strong><small>PNG / JPG / WEBP · применяется к материалам 3D-модели</small></div><label class="secondary small-button" for="textureInput">Загрузить текстуру</label><input id="textureInput" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
+      <div class="model-upload">
+        <div><strong>3D-модель одежды</strong><small>GLB / GLTF / OBJ · до 30 MB</small></div>
+        <label class="secondary small-button" for="modelInput">Загрузить модель</label>
+        <input id="modelInput" type="file" accept=".glb,.gltf,.obj" hidden>
+      </div>
+    </div>
+
+    <div class="form-panel">
+      <div class="form-title"><span>Настройки проекта</span><small id="projectState">DRAFT</small></div>
+
+      <label for="name">Название</label>
+      <input class="text-input" id="name" placeholder="Например: NOIRÉ Corset">
+
+      <label>Тип одежды</label>
+      <div class="chips" id="types">
+        <button class="chip active" data-value="Топ">Топ</button>
+        <button class="chip" data-value="Платье">Платье</button>
+        <button class="chip" data-value="Футболка">Футболка</button>
+        <button class="chip" data-value="Свитер">Свитер</button>
+        <button class="chip" data-value="Юбка">Юбка</button>
+        <button class="chip" data-value="Брюки">Брюки</button>
+        <button class="chip" data-value="Шорты">Шорты</button>
+        <button class="chip" data-value="Куртка">Куртка</button>
+      </div>
+
+      <div class="two-cols">
+        <div>
+          <label for="gender">Пол</label>
+          <select id="gender"><option>Женский</option><option>Мужской</option><option>Универсальный</option></select>
+        </div>
+        <div>
+          <label for="age">Возраст</label>
+          <select id="age"><option>Молодой взрослый</option><option>Подросток</option><option>Взрослый</option><option>Пожилой</option><option>Ребёнок</option><option>Малыш</option></select>
+        </div>
+      </div>
+
+      <div class="two-cols">
+        <div>
+          <label for="style">Стиль</label>
+          <select id="style"><option>Dark Feminine</option><option>Gothic</option><option>Y2K</option><option>Streetwear</option><option>Coquette</option><option>Minimal</option><option>Casual</option></select>
+        </div>
+        <div>
+          <label for="category">Категория CAS</label>
+          <select id="category"><option>Everyday</option><option>Formal</option><option>Athletic</option><option>Sleep</option><option>Party</option><option>Swimwear</option><option>Hot Weather</option><option>Cold Weather</option></select>
+        </div>
+      </div>
+
+      <label for="description">Описание дизайна</label>
+      <textarea id="description" placeholder="Например: чёрный корсет с серебряными деталями, облегающий силуэт, декоративная шнуровка..."></textarea>
+
+      <label>Цветовые варианты</label>
+      <div class="swatches" id="swatches">
+        <button class="swatch active" data-color="#16131a" style="--swatch:#16131a" aria-label="Чёрный"></button>
+        <button class="swatch" data-color="#f2edf3" style="--swatch:#f2edf3" aria-label="Белый"></button>
+        <button class="swatch" data-color="#8d657f" style="--swatch:#8d657f" aria-label="Лиловый"></button>
+        <button class="swatch" data-color="#5d6678" style="--swatch:#5d6678" aria-label="Серо-синий"></button>
+        <button class="swatch" data-color="#b43f63" style="--swatch:#b43f63" aria-label="Бордовый"></button>
+        <button class="swatch" data-color="#d9a7bd" style="--swatch:#d9a7bd" aria-label="Розовый"></button>
+        <button class="swatch" data-color="#4f6b57" style="--swatch:#4f6b57" aria-label="Зелёный"></button>
+        <button class="swatch" data-color="#b08a4a" style="--swatch:#b08a4a" aria-label="Золотой"></button>
+        <button class="swatch add-swatch" id="addSwatch" type="button">+</button>
+      </div>
+      <div class="variant-bar">
+        <div><strong>Варианты</strong><small id="variantHint">Выбранный цвет можно сохранить как отдельный swatch.</small></div>
+        <button class="secondary small-button" id="saveVariant" type="button">Сохранить цвет</button>
+      </div>
+      <div class="model-color-row">
+        <label for="modelColor">Цвет 3D-модели</label>
+        <div class="model-color-control"><input id="modelColor" type="color" value="#16131a"><span id="modelColorValue">#16131A</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="secondary" id="saveProject" type="button">Сохранить проект</button>
+        <button class="generate" id="generate" type="button">✨ Создать концепт</button>
+      </div>
+      <div id="status" class="status">Проект готов к настройке.</div>
+    </div>
+  </div>
+</section>
+
+<section id="forge3d" class="section forge3d">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">02 / 3D PREVIEW</p><h2>Предпросмотр одежды</h2></div>
+    <span class="counter" id="modelState">MODEL NOT LOADED</span>
+  </div>
+  <div class="viewport-shell">
+    <div id="threeViewport" class="three-viewport">
+      <div id="viewportEmpty" class="viewport-empty"><span>3D</span><strong>Загрузи GLB, GLTF или OBJ</strong><small>Модель появится здесь и её можно будет вращать мышью.</small></div>
+      <div class="viewport-loading hidden" id="viewportLoading">Загрузка модели…</div>
+    </div>
+    <div class="material-controls"><label>Материал <input id="roughness" type="range" min="0" max="1" step="0.01" value="0.45"><span id="roughnessValue">0.45</span></label><label>Металл <input id="metalness" type="range" min="0" max="1" step="0.01" value="0.05"><span id="metalnessValue">0.05</span></label></div>
+    <div class="viewport-toolbar">
+      <button type="button" id="resetView">Сбросить вид</button>
+      <button type="button" id="frontView">Вид спереди</button>
+      <button type="button" id="autoRotate">Автовращение</button>
+      <button type="button" id="toggleWireframe">Wireframe</button>
+    </div>
+  </div>
+  <p class="tip">3D-просмотр работает прямо в браузере. Это предпросмотр модели, а не готовый Sims 4 .package.</p>
+</section>
+
+<section id="validation" class="section validation">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">03 / SIMS 4 PREP</p><h2>Подготовка CC</h2><p>Проверяем проект перед технической сборкой. Это диагностика, а не генератор .package.</p></div>
+    <span class="counter" id="validationState">NOT CHECKED</span>
+  </div>
+  <div class="prep-grid">
+    <div class="check-panel">
+      <div class="panel-head"><strong>Проверка проекта</strong><button class="secondary small-button" id="runValidation" type="button">Проверить</button></div>
+      <div id="checkList" class="check-list">
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>3D-модель</strong><small>Загрузите модель для проверки.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>Текстура</strong><small>Загрузите текстуру для проверки.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>UV / Normals</strong><small>Проверка геометрии модели.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>CAS-настройки</strong><small>Проверка основных параметров одежды.</small></div></div>
+      </div>
+    </div>
+    <div class="prep-panel">
+      <div class="panel-head"><strong>LOD-подготовка</strong><span class="counter">0 / 4</span></div>
+      <div class="lod-grid">
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD0"><b>LOD0</b><span id="lod0">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD1"><b>LOD1</b><span id="lod1">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD2"><b>LOD2</b><span id="lod2">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD3"><b>LOD3</b><span id="lod3">Не загружен</span></label>
+      </div>
+      <p class="tip">LOD-файлы здесь только регистрируются в проекте. Валидность Sims 4 mesh/rig пока не проверяется.</p>
+    </div>
+  </div>
+  <div class="prep-bottom">
+    <div class="texture-info" id="textureInfo"><strong>Текстура</strong><span>Нет данных</span></div>
+    <div class="cas-summary"><strong>CAS</strong><span id="casSummary">Женский · Молодой взрослый · Everyday</span></div>
+    <button class="generate export-button" id="exportProject" type="button">Экспортировать проект JSON</button>
+  </div>
+</section>
+
+<section id="projects" class="section projects">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">02 / PROJECTS</p><h2>Мои проекты</h2></div>
+    <span class="counter" id="projectCount">1 проект</span>
+  </div>
+  <div id="projectList">
+    <div class="project-card">
+      <div class="project-image"><span>NOIRÉ</span></div>
+      <div class="project-info"><p>Топ · Женский · Молодой взрослый</p><h3>NOIRÉ Corset</h3><span>Dark Feminine · 8 swatches · Draft</span></div>
+      <button class="more" type="button">•••</button>
+    </div>
+  </div>
+</section>
+
+<section id="how" class="section how">
+  <div class="section-heading"><p class="eyebrow">04 / PIPELINE</p><h2>От идеи до Sims 4 CC</h2></div>
+  <div class="steps">
+    <article><b>01</b><h3>Дизайн</h3><p>Выбираешь основу, возраст, пол, категорию CAS, стиль и цветовые варианты.</p></article>
+    <article><b>02</b><h3>3D + текстура</h3><p>Следующий технический этап — подготовка mesh, UV и текстур для CAS.</p></article>
+    <article><b>03</b><h3>Экспорт</h3><p>После реализации сборщика проект можно будет подготовить к валидному Sims 4 .package.</p></article>
+  </div>
+</section>
+</main>
+
+<footer><strong>CC FORGE</strong><span>Clothing creation toolkit for Sims 4 creators.</span></footer>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.180.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.180.0/examples/jsm/"}}</script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
