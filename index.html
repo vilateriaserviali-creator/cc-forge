@@ -54,7 +54,12 @@
           <button id="removeImage" type="button">Удалить ×</button>
         </div>
       </div>
-      <div class="tip">💡 Для будущего экспорта можно будет добавить готовую текстуру и mesh.</div>
+      <div class="tip">💡 Поддерживаются изображения для дизайна и 3D-модели для предпросмотра.</div>
+      <div class="model-upload">
+        <div><strong>3D-модель одежды</strong><small>GLB / GLTF / OBJ · до 30 MB</small></div>
+        <label class="secondary small-button" for="modelInput">Загрузить модель</label>
+        <input id="modelInput" type="file" accept=".glb,.gltf,.obj" hidden>
+      </div>
     </div>
 
     <div class="form-panel">
@@ -118,6 +123,25 @@
   </div>
 </section>
 
+<section id="forge3d" class="section forge3d">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">02 / 3D PREVIEW</p><h2>Предпросмотр одежды</h2></div>
+    <span class="counter" id="modelState">MODEL NOT LOADED</span>
+  </div>
+  <div class="viewport-shell">
+    <div id="threeViewport" class="three-viewport">
+      <div id="viewportEmpty" class="viewport-empty"><span>3D</span><strong>Загрузи GLB, GLTF или OBJ</strong><small>Модель появится здесь и её можно будет вращать мышью.</small></div>
+      <div class="viewport-loading hidden" id="viewportLoading">Загрузка модели…</div>
+    </div>
+    <div class="viewport-toolbar">
+      <button type="button" id="resetView">Сбросить вид</button>
+      <button type="button" id="frontView">Вид спереди</button>
+      <button type="button" id="autoRotate">Автовращение</button>
+    </div>
+  </div>
+  <p class="tip">3D-просмотр работает прямо в браузере. Это предпросмотр модели, а не готовый Sims 4 .package.</p>
+</section>
+
 <section id="projects" class="section projects">
   <div class="section-heading inline">
     <div><p class="eyebrow">02 / PROJECTS</p><h2>Мои проекты</h2></div>
@@ -143,6 +167,7 @@
 </main>
 
 <footer><strong>CC FORGE</strong><span>Clothing creation toolkit for Sims 4 creators.</span></footer>
-<script src="script.js"></script>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.180.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.180.0/examples/jsm/"}}</script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
