@@ -202,18 +202,44 @@ function createPresetTexture(name){
   });
 }
 document.querySelectorAll('.clothing-template').forEach(button=>button.addEventListener('click',()=>useClothingTemplate(button.dataset.template)));
+let selectedPresetTexture=null;
+const textureSelection=document.getElementById('textureSelection');
+const selectedTexturePreview=document.getElementById('selectedTexturePreview');
+const selectedTextureName=document.getElementById('selectedTextureName');
+const selectedTextureInfo=document.getElementById('selectedTextureInfo');
+const downloadTexture=document.getElementById('downloadTexture');
+
 document.querySelectorAll('.texture-preset').forEach(button=>button.addEventListener('click',async()=>{
   try{
     document.querySelectorAll('.texture-preset').forEach(x=>x.classList.remove('active'));
     button.classList.add('active');
-    const file=await createPresetTexture(button.dataset.texture);
+    const name=button.dataset.texture;
+    const file=await createPresetTexture(name);
+    selectedPresetTexture=file;
     projectRuntime.textureFile=file;
     projectRuntime.textureMeta=await readImageMeta(file);
-    if(!model)useClothingTemplate('top');
-    applyTexture(file);
-    status.textContent='Текстура «'+button.querySelector('b').textContent+'» применена к модели.';
+    if(textureSelection){
+      textureSelection.classList.remove('hidden');
+      selectedTextureName.textContent=button.querySelector('b').textContent;
+      selectedTextureInfo.textContent=projectRuntime.textureMeta.width+' × '+projectRuntime.textureMeta.height+' PNG · готова к использованию';
+      selectedTexturePreview.className='selected-texture-preview tex-'+name;
+    }
+    status.textContent='Текстура «'+button.querySelector('b').textContent+'» выбрана. 3D-модель не требуется.';
   }catch(error){
     console.error('CC Forge texture preset error:',error);
-    status.textContent='Не удалось применить текстуру. Попробуй ещё раз.';
+    status.textContent='Не удалось выбрать текстуру. Попробуй ещё раз.';
   }
 }));
+
+downloadTexture?.addEventListener('click',()=>{
+  if(!selectedPresetTexture)return;
+  const url=URL.createObjectURL(selectedPresetTexture);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=selectedPresetTexture.name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  status.textContent='Текстура скачана в PNG.';
+});
