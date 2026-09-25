@@ -45,3 +45,22 @@ footer{padding:35px 9vw;border-top:1px solid #201e23;display:flex;justify-conten
 .model-color-control{display:flex;align-items:center;gap:10px}
 .model-color-control input[type=color]{width:44px;height:34px;padding:2px;border:1px solid rgba(255,255,255,.14);border-radius:9px;background:transparent;cursor:pointer}
 .model-color-control span{font-size:.82rem;color:#d8d1dc;font-family:monospace}
+
+/* Asset library */
+.asset-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.asset-panel{border:1px solid #29252d;background:#111015;border-radius:20px;padding:20px}
+.texture-presets,.clothing-templates{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.texture-preset,.clothing-template{border:1px solid #29252d;background:#0d0c10;color:#eee;border-radius:14px;padding:10px;text-align:left;cursor:pointer;transition:.2s}
+.texture-preset:hover,.clothing-template:hover{border-color:#73567b;transform:translateY(-1px)}
+.texture-preset b,.texture-preset small,.clothing-template b,.clothing-template small{display:block}
+.texture-preset b,.clothing-template b{font-size:12px;margin-top:8px}
+.texture-preset small,.clothing-template small{font-size:9px;color:#716b75;margin-top:2px}
+.texture-preview{height:70px;border-radius:10px;display:block;border:1px solid rgba(255,255,255,.08);background-size:18px 18px}
+.tex-black{background:repeating-linear-gradient(0deg,#17141a 0 2px,#211d24 2px 4px),repeating-linear-gradient(90deg,#17141a 0 2px,#28232b 2px 4px)}
+.tex-denim{background-color:#33455c;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.08) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,rgba(0,0,0,.12) 0 1px,transparent 1px 5px)}
+.tex-leather{background:radial-gradient(circle at 25% 25%,#68414e 0 1px,transparent 2px),linear-gradient(135deg,#21151d,#4b2939)}
+.tex-satin{background:linear-gradient(120deg,#6d466b,#d7a6c7 42%,#5b3c65 58%,#a979a6)}
+.tex-knit{background:repeating-linear-gradient(45deg,#63516a 0 2px,#8a718f 2px 4px),repeating-linear-gradient(-45deg,transparent 0 2px,rgba(20,15,25,.45) 2px 4px)}
+.tex-lace{background-color:#d8c8da;background-image:radial-gradient(circle at 4px 4px,#7f617f 1.5px,transparent 2px),radial-gradient(circle at 10px 10px,#7f617f 1.5px,transparent 2px);background-size:12px 12px}
+.template-icon{height:70px;border-radius:10px;display:grid;place-items:center;background:radial-gradient(circle,#4b3851,#18131d);color:#d9c7de;font-size:13px;font-weight:900;letter-spacing:2px}
+@media(max-width:800px){.asset-columns{grid-template-columns:1fr}.texture-presets,.clothing-templates{grid-template-columns:repeat(2,1fr)}}
