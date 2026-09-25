@@ -86,3 +86,10 @@ footer{padding:35px 9vw;border-top:1px solid #201e23;display:flex;justify-conten
 .ai-design-result{position:relative;min-height:420px;border-radius:16px;overflow:hidden;background:#0b0a0e}.ai-design-result img{display:block;width:100%;height:auto;max-height:620px;object-fit:contain;background:#0b0a0e}.design-meta{position:absolute;left:14px;bottom:14px;display:flex;gap:10px;align-items:center;padding:9px 11px;border:1px solid #39313d;background:#0d0b10e8;border-radius:10px;font-size:10px}.design-meta b{color:#e1d3e5;letter-spacing:1px}.design-meta span{color:#938a95}
 @media(max-width:900px){.build-grid{grid-template-columns:repeat(2,1fr)}.package-builder{grid-template-columns:1fr}}
 @media(max-width:560px){.build-grid{grid-template-columns:1fr}.package-info{flex-direction:column}}
+
+
+/* AI garment specification */
+.garment-spec{margin-top:14px;border:1px solid #29252d;background:#0f0e12;border-radius:16px;padding:18px}
+.spec-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.spec-title strong{font-size:14px}.spec-title span{font-size:9px;letter-spacing:1.5px;color:#8b6a95}
+.spec-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.spec-grid>div{border:1px solid #252129;background:#121015;border-radius:11px;padding:12px;min-width:0}.spec-grid small{display:block;color:#746b78;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}.spec-grid b{font-size:12px;font-weight:600}.spec-grid span{display:block;color:#aaa1ad;font-size:11px;line-height:1.5}.spec-grid ul{margin:0;padding-left:15px}.spec-grid li{margin:2px 0}.spec-cas{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:12px;padding:12px;border-radius:11px;background:#17131a;border:1px solid #302936;font-size:11px;color:#aaa1ad}.spec-cas strong{color:#e1d3e5}.spec-cas span{color:#aaa1ad}
+@media(max-width:560px){.spec-grid{grid-template-columns:1fr}.spec-title{align-items:flex-start;flex-direction:column}}
