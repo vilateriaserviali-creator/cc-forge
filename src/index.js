@@ -46,11 +46,12 @@ export default {
       const content = [{
         type: "input_text",
         text:
-          "Create an original clothing design concept for The Sims 4 CC Forge. " +
-          "Focus on the garment, not the person's identity. " +
-          "Analyze the reference image when provided and follow the user's description. " +
-          "Create a clean studio fashion product concept showing the clothing clearly. " +
-          "Include construction details, silhouette, materials, colors and distinctive CC-friendly details. " +
+          "Create an original clothing-only concept for The Sims 4 CC Forge. " +
+          "The garment itself is the subject. Do NOT generate a person, face, body, mannequin, model, influencer, outfit photo, or lifestyle scene. " +
+          "Show one complete garment clearly on a clean neutral studio background, centered and fully visible, like a professional fashion product/concept sheet. " +
+          "Preserve the requested garment type and key visual details from the reference, while creating an original design. " +
+          "Prioritize silhouette, construction, seams, closures, pockets, trims, fabric, texture, colors and CC-friendly details. " +
+          "If a reference photo contains a person wearing the garment, extract the garment design only and ignore the person. " +
           "User description: " +
           (String(description).trim() ||
             "Analyze the reference garment and create a refined original Sims 4 clothing concept.")
@@ -71,11 +72,11 @@ export default {
           "Authorization": "Bearer " + env.OPENAI_API_KEY
         },
         body: JSON.stringify({
-          model: "gpt-5.5",
+          model: "gpt-5.6-luna",
           input: [{ role: "user", content }],
           tools: [{
             type: "image_generation",
-            model: "gpt-image-2.5-sunburst",
+            model: "gpt-image-2",
             action: image ? "edit" : "generate",
             background: "opaque",
             input_fidelity: "high",
