@@ -18,8 +18,8 @@ dropZone.addEventListener('drop',e=>showFile(e.dataTransfer.files[0]));
 removeImage.addEventListener('click',()=>{preview.src='';previewWrap.classList.add('hidden');uploadContent.classList.remove('hidden');fileInput.value='';status.textContent='Изображение удалено.'});
 
 document.querySelectorAll('#types .chip').forEach(chip=>chip.addEventListener('click',()=>{document.querySelectorAll('#types .chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');}));
-document.querySelectorAll('.swatch:not(.add-swatch)').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');status.textContent='Основной цвет выбран.';}));
-document.getElementById('addSwatch').addEventListener('click',()=>{const value=prompt('Введи HEX-цвет, например #d7b7d9');if(!value||!/^#[0-9a-fA-F]{6}$/.test(value.trim())){status.textContent='Нужен HEX-цвет формата #RRGGBB.';return;}const s=document.createElement('button');s.type='button';s.className='swatch';s.style.setProperty('--swatch',value.trim());s.dataset.color=value.trim();s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');});document.getElementById('swatches').insertBefore(s,document.getElementById('addSwatch'));status.textContent='Новый swatch добавлен.';});
+document.querySelectorAll('.swatch:not(.add-swatch)').forEach(s=>s.addEventListener('click',()=>selectSwatch(s)));
+document.getElementById('addSwatch').addEventListener('click',()=>{const value=prompt('Введи HEX-цвет, например #d7b7d9');if(!value||!/^#[0-9a-fA-F]{6}$/.test(value.trim())){status.textContent='Нужен HEX-цвет формата #RRGGBB.';return;}const s=document.createElement('button');s.type='button';s.className='swatch';s.style.setProperty('--swatch',value.trim());s.dataset.color=value.trim();s.addEventListener('click',()=>selectSwatch(s));document.getElementById('swatches').insertBefore(s,document.getElementById('addSwatch'));status.textContent='Новый swatch добавлен.';});
 
 function getData(){return{name:nameInput.value.trim()||'Новый предмет',type:document.querySelector('#types .chip.active').dataset.value,gender:document.getElementById('gender').value,age:document.getElementById('age').value,style:document.getElementById('style').value,category:document.getElementById('category').value,description:document.getElementById('description').value.trim(),swatches:document.querySelectorAll('.swatch:not(.add-swatch)').length};}
 function addProject(data){const card=document.createElement('div');card.className='project-card';card.innerHTML='<div class="project-image"><span>NEW CC</span></div><div class="project-info"><p>'+data.type+' · '+data.gender+' · '+data.age+'</p><h3>'+escapeHtml(data.name)+'</h3><span>'+data.style+' · '+data.swatches+' swatches · Draft</span></div><button class="more" type="button">•••</button>';projectList.prepend(card);projectCount.textContent=projectList.querySelectorAll('.project-card').length+' проекта';}
@@ -36,8 +36,22 @@ function showModel(object){clearModel();model=object;model.traverse(o=>{if(o.isM
 async function loadModel(file){if(!file)return;const ext=file.name.split('.').pop().toLowerCase();if(!['glb','gltf','obj'].includes(ext)){status.textContent='Поддерживаются только GLB, GLTF и OBJ.';return;}if(file.size>30*1024*1024){status.textContent='3D-модель больше 30 MB.';return;}viewportLoading.classList.remove('hidden');modelState.textContent='LOADING';try{const url=URL.createObjectURL(file);if(ext==='obj'){showModel(await new OBJLoader().loadAsync(url));}else{showModel((await new GLTFLoader().loadAsync(url)).scene);} setRuntimeModel(file);URL.revokeObjectURL(url);}catch(error){console.error(error);modelState.textContent='LOAD ERROR';status.textContent='Не удалось открыть модель. Для GLTF лучше использовать .glb.';}finally{viewportLoading.classList.add('hidden');}}
 modelInput.addEventListener('change',e=>loadModel(e.target.files[0]));
 
+function applyModelColor(hex){
+  if(!model||!hex)return;
+  try{const color=new THREE.Color(hex);model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if('color' in m){m.color.copy(color);m.needsUpdate=true;}});});}catch(e){console.error(e);}
+}
+function selectSwatch(s){
+  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');
+  const color=s.dataset.color||'#16131a';
+  const picker=document.getElementById('modelColor');
+  if(picker)picker.value=color;
+  const value=document.getElementById('modelColorValue');if(value)value.textContent=color.toUpperCase();
+  applyModelColor(color);
+  status.textContent='Цвет применён к 3D-модели.';
+}
 const textureLoader=new THREE.TextureLoader();
 function applyTexture(file){if(!model||!file)return;if(file.size>10*1024*1024){status.textContent='Текстура больше 10 MB.';return;}const url=URL.createObjectURL(file);textureLoader.load(url,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{m.map=texture;m.needsUpdate=true;});});status.textContent='Текстура применена к 3D-модели.';URL.revokeObjectURL(url);},undefined,()=>{status.textContent='Не удалось загрузить текстуру.';URL.revokeObjectURL(url);});}
+document.getElementById('modelColor').addEventListener('input',e=>{const color=e.target.value;document.getElementById('modelColorValue').textContent=color.toUpperCase();applyModelColor(color);});
 textureInput.addEventListener('change',async e=>{projectRuntime.textureFile=e.target.files[0]||null;projectRuntime.textureMeta=await readImageMeta(projectRuntime.textureFile);if(!model){status.textContent='Сначала загрузи 3D-модель.';return;}applyTexture(e.target.files[0]);});
 
 function setMaterials(prop,value){if(!model)return;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(prop==='wireframe')m.wireframe=value;else m[prop]=value;m.needsUpdate=true;});});}
