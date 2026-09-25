@@ -11,7 +11,7 @@
 <header class="topbar">
   <a class="logo" href="#">CC<span>FORGE</span></a>
   <nav>
-    <a href="#create">Создать одежду</a>
+    <a href="#create">Создать одежду</a><a href="#library">Библиотека</a>
     <a href="#projects">Мои проекты</a>
     <a href="#how">Как это работает</a>
   </nav>
@@ -56,6 +56,38 @@
       <div class="panel-head"><strong>Результат анализа</strong><span id="aiResultState" class="counter">WAITING</span></div>
       <div id="aiResult" class="ai-result-content"><span class="ai-placeholder">Здесь появится структура дизайна: тип, силуэт, детали, цвета, материал и стиль.</span></div>
       <button class="secondary apply-design hidden" id="applyDesign" type="button">Применить к проекту</button>
+    </div>
+  </div>
+</section>
+
+
+<section id="library" class="section asset-library">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">01 / ASSET LIBRARY</p><h2>Текстуры и модели одежды</h2><p>Готовые стартовые материалы для быстрого создания концепта. Модель можно сразу открыть в 3D-просмотре, а текстуру — применить к ней.</p></div>
+    <span class="counter">STARTER ASSETS</span>
+  </div>
+  <div class="asset-columns">
+    <div class="asset-panel">
+      <div class="panel-head"><strong>Текстуры</strong><span class="counter">6 presets</span></div>
+      <div class="texture-presets" id="texturePresets">
+        <button class="texture-preset" data-texture="black"><span class="texture-preview tex-black"></span><b>Black Cotton</b><small>матовый хлопок</small></button>
+        <button class="texture-preset" data-texture="denim"><span class="texture-preview tex-denim"></span><b>Denim</b><small>джинсовая ткань</small></button>
+        <button class="texture-preset" data-texture="leather"><span class="texture-preview tex-leather"></span><b>Leather</b><small>кожаная поверхность</small></button>
+        <button class="texture-preset" data-texture="satin"><span class="texture-preview tex-satin"></span><b>Satin</b><small>гладкий сатин</small></button>
+        <button class="texture-preset" data-texture="knit"><span class="texture-preview tex-knit"></span><b>Knit</b><small>вязаная фактура</small></button>
+        <button class="texture-preset" data-texture="lace"><span class="texture-preview tex-lace"></span><b>Lace</b><small>кружевной узор</small></button>
+      </div>
+      <p class="tip">Пресеты создаются прямо в браузере — отдельный файл скачивать не нужно.</p>
+    </div>
+    <div class="asset-panel">
+      <div class="panel-head"><strong>Модели одежды</strong><span class="counter">4 templates</span></div>
+      <div class="clothing-templates" id="clothingTemplates">
+        <button class="clothing-template" data-template="top"><span class="template-icon">TOP</span><b>Basic Top</b><small>базовый топ</small></button>
+        <button class="clothing-template" data-template="dress"><span class="template-icon">DRESS</span><b>Mini Dress</b><small>короткое платье</small></button>
+        <button class="clothing-template" data-template="skirt"><span class="template-icon">SKIRT</span><b>Skirt</b><small>юбка</small></button>
+        <button class="clothing-template" data-template="hoodie"><span class="template-icon">HOOD</span><b>Hoodie</b><small>худи</small></button>
+      </div>
+      <p class="tip">Это стартовые 3D-шаблоны для дизайна и предпросмотра, а не готовые Sims 4 mesh/.package.</p>
     </div>
   </div>
 </section>
