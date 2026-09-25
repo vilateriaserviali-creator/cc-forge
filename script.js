@@ -33,12 +33,12 @@ function animate(){requestAnimationFrame(animate);if(model&&autoRotate)model.rot
 function clearModel(){if(!model)return;scene.remove(model);model.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){const ms=Array.isArray(o.material)?o.material:[o.material];ms.forEach(m=>m.dispose&&m.dispose());}});model=null;}
 function frameModel(object){const box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),max=Math.max(size.x,size.y,size.z)||1;object.position.sub(center);const distance=max/Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*0.65;camera.position.set(0,max*.45,distance);controls.target.set(0,0,0);controls.minDistance=max*.25;controls.maxDistance=max*5;controls.update();}
 function showModel(object){clearModel();model=object;model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{m.side=THREE.DoubleSide;});}}});scene.add(model);frameModel(model);viewportEmpty.classList.add('hidden');modelState.textContent='MODEL LOADED';document.getElementById('forge3d').scrollIntoView({behavior:'smooth'});status.textContent='3D-модель загружена.';}
-async function loadModel(file){if(!file)return;const ext=file.name.split('.').pop().toLowerCase();if(!['glb','gltf','obj'].includes(ext)){status.textContent='Поддерживаются только GLB, GLTF и OBJ.';return;}if(file.size>30*1024*1024){status.textContent='3D-модель больше 30 MB.';return;}viewportLoading.classList.remove('hidden');modelState.textContent='LOADING';try{const url=URL.createObjectURL(file);if(ext==='obj'){showModel(await new OBJLoader().loadAsync(url));}else{showModel((await new GLTFLoader().loadAsync(url)).scene);}URL.revokeObjectURL(url);}catch(error){console.error(error);modelState.textContent='LOAD ERROR';status.textContent='Не удалось открыть модель. Для GLTF лучше использовать .glb.';}finally{viewportLoading.classList.add('hidden');}}
+async function loadModel(file){if(!file)return;const ext=file.name.split('.').pop().toLowerCase();if(!['glb','gltf','obj'].includes(ext)){status.textContent='Поддерживаются только GLB, GLTF и OBJ.';return;}if(file.size>30*1024*1024){status.textContent='3D-модель больше 30 MB.';return;}viewportLoading.classList.remove('hidden');modelState.textContent='LOADING';try{const url=URL.createObjectURL(file);if(ext==='obj'){showModel(await new OBJLoader().loadAsync(url));}else{showModel((await new GLTFLoader().loadAsync(url)).scene);} setRuntimeModel(file);URL.revokeObjectURL(url);}catch(error){console.error(error);modelState.textContent='LOAD ERROR';status.textContent='Не удалось открыть модель. Для GLTF лучше использовать .glb.';}finally{viewportLoading.classList.add('hidden');}}
 modelInput.addEventListener('change',e=>loadModel(e.target.files[0]));
 
 const textureLoader=new THREE.TextureLoader();
 function applyTexture(file){if(!model||!file)return;if(file.size>10*1024*1024){status.textContent='Текстура больше 10 MB.';return;}const url=URL.createObjectURL(file);textureLoader.load(url,texture=>{texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=false;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{m.map=texture;m.needsUpdate=true;});});status.textContent='Текстура применена к 3D-модели.';URL.revokeObjectURL(url);},undefined,()=>{status.textContent='Не удалось загрузить текстуру.';URL.revokeObjectURL(url);});}
-textureInput.addEventListener('change',e=>{if(!model){status.textContent='Сначала загрузи 3D-модель.';return;}applyTexture(e.target.files[0]);});
+textureInput.addEventListener('change',async e=>{projectRuntime.textureFile=e.target.files[0]||null;projectRuntime.textureMeta=await readImageMeta(projectRuntime.textureFile);if(!model){status.textContent='Сначала загрузи 3D-модель.';return;}applyTexture(e.target.files[0]);});
 
 function setMaterials(prop,value){if(!model)return;model.traverse(o=>{if(!o.isMesh||!o.material)return;const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>{if(prop==='wireframe')m.wireframe=value;else m[prop]=value;m.needsUpdate=true;});});}
 const roughness=document.getElementById('roughness'),metalness=document.getElementById('metalness');
@@ -50,4 +50,47 @@ document.getElementById('frontView').addEventListener('click',()=>{if(!model)ret
 document.getElementById('autoRotate').addEventListener('click',e=>{autoRotate=!autoRotate;e.currentTarget.textContent=autoRotate?'Остановить вращение':'Автовращение';});
 window.addEventListener('resize',()=>{if(!renderer)return;camera.aspect=viewport.clientWidth/viewport.clientHeight;camera.updateProjectionMatrix();renderer.setSize(viewport.clientWidth,viewport.clientHeight);});
 init3D();
+document.querySelectorAll('#types .chip,#gender,#age,#style,#category').forEach(el=>el.addEventListener('change',()=>{const d=getData();const box=document.getElementById('casSummary');if(box)box.textContent=d.gender+' · '+d.age+' · '+d.category+' · '+d.style;}));
 const saved=localStorage.getItem('ccForgeProject');if(saved){try{nameInput.value=JSON.parse(saved).name==='Новый предмет'?'':JSON.parse(saved).name;status.textContent='Найден сохранённый проект.';}catch(e){}}
+
+const projectRuntime={modelFile:null,textureFile:null,textureMeta:null,lods:{LOD0:null,LOD1:null,LOD2:null,LOD3:null}};
+function setRuntimeModel(file){projectRuntime.modelFile=file||null;}
+function inspectModel(){
+  if(!model)return {ok:false,message:'Модель не загружена.'};
+  let meshes=0,materials=0,uv=0,normals=0,triangles=0;
+  model.traverse(o=>{if(o.isMesh){meshes++;const mats=Array.isArray(o.material)?o.material:[o.material];materials+=mats.length;if(o.geometry.getAttribute('uv'))uv++;if(o.geometry.getAttribute('normal'))normals++;const pos=o.geometry.getAttribute('position');if(pos)triangles+=o.geometry.index?o.geometry.index.count/3:pos.count/3;}});
+  return {ok:true,meshes,materials,uv,normals,triangles};
+}
+function checkRow(title,state,detail){
+  const icon=state==='ok'?'✓':state==='warn'?'!':state==='error'?'×':'•';
+  return '<div class="check-row '+state+'"><span class="check-dot">'+icon+'</span><div><strong>'+title+'</strong><small>'+escapeHtml(detail)+'</small></div></div>';
+}
+async function readImageMeta(file){
+  return new Promise(resolve=>{if(!file){resolve(null);return;}const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{resolve({width:img.naturalWidth,height:img.naturalHeight,size:file.size,name:file.name});URL.revokeObjectURL(url)};img.onerror=()=>{resolve(null);URL.revokeObjectURL(url)}})
+}
+async function runValidation(){
+  const data=getData(),m=inspectModel(),texture=projectRuntime.textureMeta||await readImageMeta(projectRuntime.textureFile);
+  projectRuntime.textureMeta=texture;
+  const rows=[];
+  rows.push(checkRow('3D-модель',m.ok?'ok':'error',m.ok?m.meshes+' mesh · '+m.materials+' material · ~'+Math.round(m.triangles).toLocaleString('ru-RU')+' triangles':'Загрузите GLB, GLTF или OBJ.'));
+  if(texture) rows.push(checkRow('Текстура',texture.width&&texture.height?'ok':'warn',texture.name+' · '+texture.width+'×'+texture.height+' · '+formatBytes(texture.size)));
+  else rows.push(checkRow('Текстура','warn','Текстура не загружена.'));
+  if(m.ok) rows.push(checkRow('UV / Normals',m.uv===m.meshes&&m.normals===m.meshes?'ok':'warn','UV: '+m.uv+'/'+m.meshes+' mesh · Normals: '+m.normals+'/'+m.meshes+' mesh'));
+  else rows.push(checkRow('UV / Normals','neutral','Сначала загрузите модель.'));
+  const casOk=!!data.type&&!!data.gender&&!!data.age&&!!data.category;
+  rows.push(checkRow('CAS-настройки',casOk?'ok':'error',data.type+' · '+data.gender+' · '+data.age+' · '+data.category));
+  document.getElementById('checkList').innerHTML=rows.join('');
+  const errors=rows.filter(x=>x.indexOf('check-row error')!==-1).length;
+  document.getElementById('validationState').textContent=errors?'NEEDS FIX':'CHECKED';
+  document.getElementById('textureInfo').innerHTML=texture?'<strong>Текстура</strong><span>'+escapeHtml(texture.name)+' · '+texture.width+'×'+texture.height+' · '+formatBytes(texture.size)+'</span>':'<strong>Текстура</strong><span>Нет данных</span>';
+  document.getElementById('casSummary').textContent=data.gender+' · '+data.age+' · '+data.category+' · '+data.style;
+  status.textContent=errors?'Проверка завершена: есть обязательные пункты для исправления.':'Проверка завершена.';
+}
+function formatBytes(bytes){if(!bytes)return '0 B';const units=['B','KB','MB'];let i=0,n=bytes;while(n>=1024&&i<units.length-1){n/=1024;i++;}return n.toFixed(i?1:0)+' '+units[i];}
+function updateLodCount(){document.querySelector('.prep-panel .counter').textContent=Object.values(projectRuntime.lods).filter(Boolean).length+' / 4';}
+document.querySelectorAll('.lod-card input').forEach(input=>input.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;projectRuntime.lods[e.target.dataset.lod]=file;document.getElementById(e.target.dataset.lod.toLowerCase()).textContent=file.name;updateLodCount();status.textContent=e.target.dataset.lod+' добавлен в проект.';}));
+document.getElementById('runValidation').addEventListener('click',runValidation);
+document.getElementById('exportProject').addEventListener('click',()=>{
+  const data=getData(),m=inspectModel(),payload={tool:'CC Forge',version:'0.3',project:data,model:m.ok?{name:projectRuntime.modelFile?.name||'loaded',size:projectRuntime.modelFile?.size||null,meshes:m.meshes,materials:m.materials,uvMeshes:m.uv,normalsMeshes:m.normals,triangles:Math.round(m.triangles)}:null,texture:projectRuntime.textureMeta,lods:Object.fromEntries(Object.entries(projectRuntime.lods).map(([k,v])=>[k,v?{name:v.name,size:v.size}:null])),note:'JSON проекта и диагностика. Это не Sims 4 .package.'};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(data.name||'cc-forge-project').replace(/[^a-z0-9а-яё_-]+/gi,'-').toLowerCase()+'.json';a.click();URL.revokeObjectURL(url);status.textContent='Проект экспортирован в JSON.';
+});
