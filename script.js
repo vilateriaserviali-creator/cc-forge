@@ -157,11 +157,13 @@ document.getElementById('analyzeDesign').addEventListener('click',async()=>{
 });
 
 applyDesign.addEventListener('click',()=>{
- if(!aiDesign)return;
- const typeButton=[...document.querySelectorAll('#types .chip')].find(x=>x.dataset.value===aiDesign.type);if(typeButton){document.querySelectorAll('#types .chip').forEach(x=>x.classList.remove('active'));typeButton.classList.add('active');}
- const styleSelect=document.getElementById('style');const opt=[...styleSelect.options].find(x=>x.text.toLowerCase()===aiDesign.style.toLowerCase());if(opt)styleSelect.value=opt.text;
- if(aiDescription.value.trim())document.getElementById('description').value=aiDescription.value.trim();
- document.getElementById('create').scrollIntoView({behavior:'smooth'});status.textContent='Дизайн применён к проекту.';
+  if(!aiDesign)return;
+  const text=aiDescription.value.trim();
+  if(text)document.getElementById('description').value=text;
+  const name=document.getElementById('name');
+  if(name&&!name.value.trim())name.value='AI Clothing Concept';
+  document.getElementById('create').scrollIntoView({behavior:'smooth'});
+  status.textContent='Дизайн применён к проекту. Можно продолжить настройку CC.';
 });
 
 
