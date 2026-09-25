@@ -123,22 +123,39 @@ aiPhotoInput.addEventListener('change',e=>{
 });
 document.getElementById('removeAiPhoto').addEventListener('click',()=>{aiPhotoData=null;aiPhoto.src='';aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';});
 document.getElementById('clearDesign').addEventListener('click',()=>{aiDescription.value='';aiPhotoData=null;aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';aiResult.innerHTML='<span class="ai-placeholder">Здесь появится структура дизайна: тип, силуэт, детали, цвета, материал и стиль.</span>';aiResultState.textContent='WAITING';applyDesign.classList.add('hidden');});
-function inferDesign(text){
- const t=text.toLowerCase();
- const type=t.includes('плать')?'Платье':t.includes('юбк')?'Юбка':t.includes('брюк')?'Брюки':t.includes('шорт')?'Шорты':t.includes('куртк')?'Куртка':t.includes('свитер')?'Свитер':t.includes('футбол')?'Футболка':'Топ';
- const style=t.includes('гот')||t.includes('goth')?'Gothic':t.includes('y2k')?'Y2K':t.includes('кокет')?'Coquette':t.includes('street')?'Streetwear':t.includes('миним')?'Minimal':t.includes('casual')?'Casual':'Dark Feminine';
- const colors=['чёрн','черн','black'].some(x=>t.includes(x))?'Чёрный':t.includes('бел')?'Белый':t.includes('крас')||t.includes('бордов')?'Бордовый':t.includes('роз')?'Розовый':t.includes('зел')?'Зелёный':t.includes('син')?'Синий':'По референсу';
- const details=[];['длинн','коротк','открыт','цеп','шнур','кружев','карман','пугов','молни','асиммет','облега'].forEach(k=>{if(t.includes(k))details.push(k==='длинн'?'длинные элементы':k==='коротк'?'короткие элементы':k==='открыт'?'открытые зоны':k==='цеп'?'цепочки':k==='шнур'?'шнуровка':k==='кружев'?'кружево':k==='карман'?'карманы':k==='пугов'?'пуговицы':k==='молни'?'молния':k==='асиммет'?'асимметрия':'облегающий силуэт');});
- return {type,style,colors,details:details.length?details:['детали определяются по референсу'],source:aiPhotoData?'Фото + описание':'Описание'};
+async function generateRealDesign(text){
+  const payload={description:text,image:aiPhotoData};
+  const response=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const data=await response.json().catch(()=>({error:'Некорректный ответ сервера.'}));
+  if(!response.ok)throw new Error(data.error||'Ошибка генерации.');
+  return data;
 }
-document.getElementById('analyzeDesign').addEventListener('click',()=>{
- const text=aiDescription.value.trim();
- if(!text&&!aiPhotoData){status.textContent='Добавь фото, описание или оба источника.';return;}
- aiDesign=inferDesign(text);
- aiResultState.textContent='READY';
- aiResult.innerHTML='<div class="design-summary"><div><b>Источник</b><span>'+escapeHtml(aiDesign.source)+'</span></div><div><b>Тип</b><span>'+aiDesign.type+'</span></div><div><b>Стиль</b><span>'+aiDesign.style+'</span></div><div><b>Цвет</b><span>'+aiDesign.colors+'</span></div><div><b>Детали</b><span>'+escapeHtml(aiDesign.details.join(', '))+'</span></div><div><b>Описание</b><span>'+escapeHtml(text||'Анализ по фотографии')+'</span></div></div>';
- applyDesign.classList.remove('hidden');status.textContent='Дизайн сформирован. Можно применить его к проекту.';
+document.getElementById('analyzeDesign').addEventListener('click',async()=>{
+  const text=aiDescription.value.trim();
+  if(!text&&!aiPhotoData){status.textContent='Добавь фото, описание или оба источника.';return;}
+  const button=document.getElementById('analyzeDesign');
+  button.disabled=true;
+  button.textContent='✨ Генерирую…';
+  aiResultState.textContent='GENERATING';
+  aiResult.innerHTML='<div class="ai-loading">AI анализирует референс и создаёт дизайн одежды…</div>';
+  applyDesign.classList.add('hidden');
+  try{
+    aiDesign=await generateRealDesign(text);
+    aiResultState.textContent='READY';
+    aiResult.innerHTML='<div class="ai-generated"><img src="'+aiDesign.image+'" alt="Сгенерированный дизайн одежды"><div class="design-summary"><div><b>Источник</b><span>'+escapeHtml(aiDesign.source)+'</span></div><div><b>Описание</b><span>'+escapeHtml(text||'Дизайн создан по фотографии')+'</span></div></div><a class="secondary ai-download" href="'+aiDesign.image+'" download="cc-forge-design.png">Скачать дизайн PNG</a></div>';
+    applyDesign.classList.remove('hidden');
+    status.textContent='Готово: AI создал дизайн одежды.';
+  }catch(error){
+    console.error(error);
+    aiResultState.textContent='ERROR';
+    aiResult.innerHTML='<span class="ai-placeholder">'+escapeHtml(error.message)+'</span>';
+    status.textContent='Генерация не выполнена.';
+  }finally{
+    button.disabled=false;
+    button.textContent='✨ Создать дизайн';
+  }
 });
+
 applyDesign.addEventListener('click',()=>{
  if(!aiDesign)return;
  const typeButton=[...document.querySelectorAll('#types .chip')].find(x=>x.dataset.value===aiDesign.type);if(typeButton){document.querySelectorAll('#types .chip').forEach(x=>x.classList.remove('active'));typeButton.classList.add('active');}
