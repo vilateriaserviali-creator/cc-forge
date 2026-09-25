@@ -48,3 +48,24 @@ footer{padding:35px 9vw;border-top:1px solid #201e23;display:flex;justify-conten
 
 /* AI generated design */
 .ai-generated{display:grid;gap:14px}.ai-generated>img{width:100%;max-height:620px;object-fit:contain;border-radius:16px;background:#0b0a0d;border:1px solid #29252d}.ai-loading{padding:22px;border:1px solid #29252d;border-radius:14px;background:#0d0c10;color:#c8a9d1}.ai-download{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;width:max-content}.ai-generated .design-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ai-generated .design-summary>div{padding:12px;border:1px solid #29252d;border-radius:12px;background:#0d0c10}.ai-generated .design-summary b,.ai-generated .design-summary span{display:block}.ai-generated .design-summary span{color:#9a939d;font-size:11px;margin-top:3px}@media(max-width:800px){.ai-generated .design-summary{grid-template-columns:1fr}.ai-download{width:100%}}
+
+
+/* AI clothing generation preview */
+.ai-generation{position:relative;min-height:560px;border:1px solid #29252d;border-radius:18px;background:radial-gradient(circle at 50% 35%,#241a2a 0,#0d0b10 55%);overflow:hidden;padding:24px;display:flex;flex-direction:column;justify-content:flex-end}
+.generation-visual{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.generation-garment{position:relative;width:190px;height:290px;clip-path:polygon(25% 0,75% 0,89% 16%,78% 100%,22% 100%,11% 16%);background:linear-gradient(145deg,#5b3b63,#17121b);opacity:.3;filter:blur(8px);animation:garmentForge 3.2s ease-in-out infinite}
+.generation-garment:before,.generation-garment:after{content:"";position:absolute;background:#c9a7d3;opacity:.5}
+.generation-garment:before{width:65%;height:2px;left:17%;top:34%;box-shadow:0 38px 0 #c9a7d3,0 76px 0 #c9a7d3}
+.generation-garment:after{width:18px;height:70%;left:50%;top:15%;transform:translateX(-50%);opacity:.18}
+.generation-garment span{position:absolute;width:55px;height:55px;border:2px solid #d9bee0;border-radius:50%;left:50%;top:12%;transform:translateX(-50%);opacity:.35}
+.generation-garment i{position:absolute;inset:-40%;background:linear-gradient(90deg,transparent,#dcbde5aa,transparent);transform:translateX(-100%) rotate(8deg);animation:forgeScan 1.8s linear infinite}
+.generation-scan{position:absolute;width:80%;height:2px;background:#d6b8df;box-shadow:0 0 22px #c49bd4;opacity:.5;animation:scanDown 2.4s ease-in-out infinite}
+.generation-title{position:relative;font-size:24px;font-weight:800;z-index:2}
+.generation-stage{position:relative;color:#a59ca8;font-size:12px;margin-top:7px;z-index:2}
+.generation-steps{position:relative;display:flex;gap:7px;flex-wrap:wrap;margin-top:18px;z-index:2}
+.generation-step{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#655f68;border:1px solid #302c34;border-radius:99px;padding:7px 9px;background:#0d0c10cc;transition:.25s}
+.generation-step.active{color:#e4d5e8;border-color:#73567b;background:#2b2030}
+@keyframes garmentForge{0%,100%{transform:scale(.92);opacity:.22;filter:blur(9px)}50%{transform:scale(1);opacity:.82;filter:blur(1px)}}
+@keyframes forgeScan{to{transform:translateX(180%) rotate(8deg)}}
+@keyframes scanDown{0%{transform:translateY(-150px);opacity:0}25%{opacity:.6}75%{opacity:.5}100%{transform:translateY(150px);opacity:0}}
+@media(max-width:800px){.ai-generation{min-height:430px}.generation-garment{width:150px;height:230px}}
