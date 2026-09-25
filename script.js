@@ -125,7 +125,7 @@ document.getElementById('removeAiPhoto').addEventListener('click',()=>{aiPhotoDa
 document.getElementById('clearDesign').addEventListener('click',()=>{aiDescription.value='';aiPhotoData=null;aiPhotoPreview.classList.add('hidden');aiPhotoInput.value='';aiResult.innerHTML='<span class="ai-placeholder">Здесь появится структура дизайна: тип, силуэт, детали, цвета, материал и стиль.</span>';aiResultState.textContent='WAITING';applyDesign.classList.add('hidden');});
 async function generateRealDesign(text){
   const payload={description:text,image:aiPhotoData};
-  const response=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const response=await fetch('https://cc-forge-api.vilateriaserviali.workers.dev',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   const data=await response.json().catch(()=>({error:'Некорректный ответ сервера.'}));
   if(!response.ok)throw new Error(data.error||'Ошибка генерации.');
   return data;
