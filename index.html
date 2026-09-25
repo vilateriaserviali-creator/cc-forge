@@ -108,11 +108,19 @@
 
       <label>Цветовые варианты</label>
       <div class="swatches" id="swatches">
-        <button class="swatch active" data-color="#16131a" style="--swatch:#16131a"></button>
-        <button class="swatch" data-color="#f2edf3" style="--swatch:#f2edf3"></button>
-        <button class="swatch" data-color="#8d657f" style="--swatch:#8d657f"></button>
-        <button class="swatch" data-color="#5d6678" style="--swatch:#5d6678"></button>
+        <button class="swatch active" data-color="#16131a" style="--swatch:#16131a" aria-label="Чёрный"></button>
+        <button class="swatch" data-color="#f2edf3" style="--swatch:#f2edf3" aria-label="Белый"></button>
+        <button class="swatch" data-color="#8d657f" style="--swatch:#8d657f" aria-label="Лиловый"></button>
+        <button class="swatch" data-color="#5d6678" style="--swatch:#5d6678" aria-label="Серо-синий"></button>
+        <button class="swatch" data-color="#b43f63" style="--swatch:#b43f63" aria-label="Бордовый"></button>
+        <button class="swatch" data-color="#d9a7bd" style="--swatch:#d9a7bd" aria-label="Розовый"></button>
+        <button class="swatch" data-color="#4f6b57" style="--swatch:#4f6b57" aria-label="Зелёный"></button>
+        <button class="swatch" data-color="#b08a4a" style="--swatch:#b08a4a" aria-label="Золотой"></button>
         <button class="swatch add-swatch" id="addSwatch" type="button">+</button>
+      </div>
+      <div class="model-color-row">
+        <label for="modelColor">Цвет 3D-модели</label>
+        <div class="model-color-control"><input id="modelColor" type="color" value="#16131a"><span id="modelColorValue">#16131A</span></div>
       </div>
 
       <div class="actions">
