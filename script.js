@@ -2,7 +2,7 @@ const WORKER_URL='https://cc-forge.vilateriaserviali.workers.dev';
 
 const $=id=>document.getElementById(id);
 const status=$('status');
-const projectRuntime={textureFile:null,textureMeta:null,basePackage:null};
+const projectRuntime={textureFile:null,textureMeta:null};
 let aiPhotoData=null,aiDesign=null,selectedPresetTexture=null;
 
 function escapeHtml(value=''){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
@@ -81,11 +81,10 @@ $('analyzeDesign')?.addEventListener('click',async()=>{
 });
 applyDesign?.addEventListener('click',()=>{if(!aiDesign)return;const text=aiDescription.value.trim();if(text)$('description').value=text;addProject(getData());$('create').scrollIntoView({behavior:'smooth'});status.textContent='Maxis Match дизайн применён к проекту.';});
 
-const basePackageInput=$('basePackageInput');
-basePackageInput?.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;if(file.size>100*1024*1024){status.textContent='PACKAGE больше 100 MB.';return;}projectRuntime.basePackage=file;$('basePackageInfo').classList.remove('hidden');$('basePackageInfo').innerHTML='<strong>'+escapeHtml(file.name)+'</strong><span>'+formatBytes(file.size)+' · базовый пакет загружен</span>';$('packageState').textContent='BASE READY';$('checkBase').checked=true;updateBuildChecks();status.textContent='Базовый .package загружен. Он нужен для реальной сборки CC.';});
-function updateBuildChecks(){if($('checkTexture'))$('checkTexture').checked=!!projectRuntime.textureFile;if($('checkBase'))$('checkBase').checked=!!projectRuntime.basePackage;const ready=!!projectRuntime.textureFile&&!!projectRuntime.basePackage;const button=$('buildPackage');if(button)button.disabled=!ready;if($('packageState')&&!projectRuntime.basePackage)$('packageState').textContent='WAITING';}
+function updateBuildChecks(){if($('checkTexture'))$('checkTexture').checked=!!projectRuntime.textureFile;const ready=!!aiDesign;const button=$('buildPackage');if(button)button.disabled=!ready;if($('packageState'))$('packageState').textContent=ready?'DESIGN READY':'WAITING';}
 $('checkCas')?.addEventListener('change',updateBuildChecks);
-$('buildPackage')?.addEventListener('click',()=>{status.textContent='Базовый пакет и текстура готовы. Следующий backend-этап должен заменить ресурсы CASP/GEOM/RLE2 и собрать валидный DBPF .package — этот шаг не имитируется браузерным JSON.';$('packageBuildStatus').textContent='Ресурсы готовы к backend-сборке. Фальшивый .package не создаём.';});
+$('goToAi')?.addEventListener('click',()=>{$('aiForge')?.scrollIntoView({behavior:'smooth'});});
+$('buildPackage')?.addEventListener('click',()=>{if(!aiDesign){status.textContent='Сначала создай дизайн по фото или описанию.';$('aiForge')?.scrollIntoView({behavior:'smooth'});return;}$('packageBuildStatus').textContent='Дизайн принят. Следующий этап — автоматическая генерация Sims 4 mesh, CAS и настоящего .package.';status.textContent='Дизайн подготовлен к сборке Sims 4 CC.';});
 updateBuildChecks();
 
 const saved=localStorage.getItem('ccForgeProject');if(saved){try{const d=JSON.parse(saved);$('name').value=d.name==='Новый предмет'?'':d.name;$('description').value=d.description||'';$('projectState').textContent='SAVED';}catch{}}
