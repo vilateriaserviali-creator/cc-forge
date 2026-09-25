@@ -52,6 +52,7 @@ export default {
           "Preserve the requested garment type and key visual details from the reference, while creating an original design. " +
           "Use simplified Maxis Match proportions, clean stylized shapes, readable seams and trims, controlled detail, game-friendly color blocking, and a polished Sims 4 CAS aesthetic. Prioritize silhouette, construction, seams, closures, pockets, trims, stylized fabric texture, colors and CC-friendly details. " +
           "If a reference photo contains a person wearing the garment, extract the garment design only and ignore the person. " +
+          "Also return a structured garment specification in the requested JSON schema. Infer conservatively from the photo/description; do not invent details that are not visually supported. CAS should use Sims 4 concepts: body_type such as Top/Bottom/Body, gender Female/Male/Unisex, age such as Teen/Young Adult/Adult/Elder or Child/Toddler, categories such as Everyday/Formal/Athletic/Sleep/Party/Swimwear/Hot Weather/Cold Weather, and concise style tags. " +
           "User description: " +
           (String(description).trim() ||
             "Analyze the reference garment and create a refined original Sims 4 clothing concept.")
@@ -74,6 +75,39 @@ export default {
         body: JSON.stringify({
           model: "gpt-5.1",
           input: [{ role: "user", content }],
+          text: {
+            format: {
+              type: "json_schema",
+              name: "garment_spec",
+              description: "Structured Sims 4 clothing specification extracted from the reference and description.",
+              strict: true,
+              schema: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  garment_type: { type: "string" },
+                  silhouette: { type: "string" },
+                  details: { type: "array", items: { type: "string" } },
+                  materials: { type: "array", items: { type: "string" } },
+                  colors: { type: "array", items: { type: "string" } },
+                  maxis_match_notes: { type: "array", items: { type: "string" } },
+                  cas: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      body_type: { type: "string" },
+                      gender: { type: "string" },
+                      age: { type: "string" },
+                      categories: { type: "array", items: { type: "string" } },
+                      style_tags: { type: "array", items: { type: "string" } }
+                    },
+                    required: ["body_type", "gender", "age", "categories", "style_tags"]
+                  }
+                },
+                required: ["garment_type", "silhouette", "details", "materials", "colors", "maxis_match_notes", "cas"]
+              }
+            }
+          },
           tools: [{
             type: "image_generation",
             model: "gpt-image-2",
@@ -94,9 +128,15 @@ export default {
         );
       }
 
-      const imageCall = (data.output || []).find(
-        item => item.type === "image_generation_call"
-      );
+      const imageCall = (data.output || []).find(item => item.type === "image_generation_call");
+      const textParts = (data.output || [])
+        .filter(item => item.type === "message")
+        .flatMap(item => item.content || [])
+        .filter(part => part.type === "output_text")
+        .map(part => part.text)
+        .join("");
+      let garmentSpec = null;
+      try { garmentSpec = JSON.parse(textParts); } catch (_) { garmentSpec = null; }
 
       if (!imageCall?.result) {
         return json({ error: "AI не вернул изображение." }, 502, origin);
@@ -104,7 +144,8 @@ export default {
 
       return json({
         image: "data:image/png;base64," + imageCall.result,
-        source: image ? "Фото + описание" : "Описание"
+        source: image ? "Фото + описание" : "Описание",
+        garmentSpec
       }, 200, origin);
     } catch (error) {
       console.error(error);
