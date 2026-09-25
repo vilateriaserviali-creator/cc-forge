@@ -145,6 +145,39 @@
   <p class="tip">3D-просмотр работает прямо в браузере. Это предпросмотр модели, а не готовый Sims 4 .package.</p>
 </section>
 
+<section id="validation" class="section validation">
+  <div class="section-heading inline">
+    <div><p class="eyebrow">03 / SIMS 4 PREP</p><h2>Подготовка CC</h2><p>Проверяем проект перед технической сборкой. Это диагностика, а не генератор .package.</p></div>
+    <span class="counter" id="validationState">NOT CHECKED</span>
+  </div>
+  <div class="prep-grid">
+    <div class="check-panel">
+      <div class="panel-head"><strong>Проверка проекта</strong><button class="secondary small-button" id="runValidation" type="button">Проверить</button></div>
+      <div id="checkList" class="check-list">
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>3D-модель</strong><small>Загрузите модель для проверки.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>Текстура</strong><small>Загрузите текстуру для проверки.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>UV / Normals</strong><small>Проверка геометрии модели.</small></div></div>
+        <div class="check-row neutral"><span class="check-dot">•</span><div><strong>CAS-настройки</strong><small>Проверка основных параметров одежды.</small></div></div>
+      </div>
+    </div>
+    <div class="prep-panel">
+      <div class="panel-head"><strong>LOD-подготовка</strong><span class="counter">0 / 4</span></div>
+      <div class="lod-grid">
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD0"><b>LOD0</b><span id="lod0">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD1"><b>LOD1</b><span id="lod1">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD2"><b>LOD2</b><span id="lod2">Не загружен</span></label>
+        <label class="lod-card"><input type="file" accept=".glb,.gltf,.obj" data-lod="LOD3"><b>LOD3</b><span id="lod3">Не загружен</span></label>
+      </div>
+      <p class="tip">LOD-файлы здесь только регистрируются в проекте. Валидность Sims 4 mesh/rig пока не проверяется.</p>
+    </div>
+  </div>
+  <div class="prep-bottom">
+    <div class="texture-info" id="textureInfo"><strong>Текстура</strong><span>Нет данных</span></div>
+    <div class="cas-summary"><strong>CAS</strong><span id="casSummary">Женский · Молодой взрослый · Everyday</span></div>
+    <button class="generate export-button" id="exportProject" type="button">Экспортировать проект JSON</button>
+  </div>
+</section>
+
 <section id="projects" class="section projects">
   <div class="section-heading inline">
     <div><p class="eyebrow">02 / PROJECTS</p><h2>Мои проекты</h2></div>
@@ -160,7 +193,7 @@
 </section>
 
 <section id="how" class="section how">
-  <div class="section-heading"><p class="eyebrow">03 / PIPELINE</p><h2>От идеи до Sims 4 CC</h2></div>
+  <div class="section-heading"><p class="eyebrow">04 / PIPELINE</p><h2>От идеи до Sims 4 CC</h2></div>
   <div class="steps">
     <article><b>01</b><h3>Дизайн</h3><p>Выбираешь основу, возраст, пол, категорию CAS, стиль и цветовые варианты.</p></article>
     <article><b>02</b><h3>3D + текстура</h3><p>Следующий технический этап — подготовка mesh, UV и текстур для CAS.</p></article>
