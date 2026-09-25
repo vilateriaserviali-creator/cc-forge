@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC Forge — AI Creator for The Sims 4</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#">CC<span>FORGE</span></a>
+    <nav>
+      <a href="#create">Создать CC</a>
+      <a href="#projects">Мои проекты</a>
+      <a href="#how">Как это работает</a>
+    </nav>
+    <button class="profile">Мой профиль</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">AI CREATOR FOR THE SIMS 4</p>
+        <h1>Превращай идеи<br><em>в CC.</em></h1>
+        <p class="hero-text">Загрузи референс или опиши предмет — CC Forge поможет превратить задумку в дизайн для The Sims 4.</p>
+        <a class="primary" href="#create">Начать создание <span>→</span></a>
+      </div>
+      <div class="hero-card">
+        <div class="orb"></div>
+        <div class="floating-tag">CREATE YOUR CC</div>
+        <div class="mini-card">
+          <small>PROJECT</small>
+          <strong>NOIRÉ Corset</strong>
+          <span>Clothing · Young Adult</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="create" class="creator section">
+      <div class="section-heading">
+        <p class="eyebrow">01 / CREATE</p>
+        <h2>Создай свой предмет</h2>
+        <p>Начни с фотографии, референса или обычного описания.</p>
+      </div>
+
+      <div class="creator-grid">
+        <div class="upload-box" id="dropZone">
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+          <div id="uploadContent">
+            <div class="upload-icon">＋</div>
+            <h3>Добавь референс</h3>
+            <p>Перетащи изображение сюда<br>или <label for="fileInput">выбери файл</label></p>
+            <small>PNG, JPG или WEBP · до 10 MB</small>
+          </div>
+          <div id="previewWrap" class="preview-wrap hidden">
+            <img id="preview" alt="Референс">
+            <button id="removeImage" type="button">Удалить ×</button>
+          </div>
+        </div>
+
+        <div class="form-panel">
+          <label>Что создать?</label>
+          <textarea id="description" placeholder="Например: чёрный корсет с серебряными деталями, облегающий силуэт, немного готический стиль..."></textarea>
+
+          <label>Категория</label>
+          <div class="chips" id="categories">
+            <button class="chip active" data-value="Одежда">Одежда</button>
+            <button class="chip" data-value="Волосы">Волосы</button>
+            <button class="chip" data-value="Обувь">Обувь</button>
+            <button class="chip" data-value="Аксессуар">Аксессуар</button>
+            <button class="chip" data-value="Мебель">Мебель</button>
+            <button class="chip" data-value="Объект">Объект</button>
+          </div>
+
+          <div class="two-cols">
+            <div>
+              <label for="style">Стиль</label>
+              <select id="style">
+                <option>Dark Feminine</option>
+                <option>Gothic</option>
+                <option>Y2K</option>
+                <option>Streetwear</option>
+                <option>Coquette</option>
+                <option>Minimal</option>
+              </select>
+            </div>
+            <div>
+              <label for="age">Возраст</label>
+              <select id="age">
+                <option>Молодой взрослый</option>
+                <option>Подросток</option>
+                <option>Взрослый</option>
+                <option>Пожилой</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="generate" id="generate">✨ Создать концепт</button>
+          <div id="status" class="status">Пока это визуальный MVP. AI-генерация и экспорт .package подключаются следующим этапом.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section projects">
+      <div class="section-heading inline">
+        <div>
+          <p class="eyebrow">02 / PROJECTS</p>
+          <h2>Мои проекты</h2>
+        </div>
+        <span class="counter" id="projectCount">1 проект</span>
+      </div>
+      <div class="project-card">
+        <div class="project-image"><span>NOIRÉ</span></div>
+        <div class="project-info">
+          <p>Одежда · Молодой взрослый</p>
+          <h3>NOIRÉ Corset</h3>
+          <span>Dark Feminine · Concept</span>
+        </div>
+        <button class="more">•••</button>
+      </div>
+      <div id="newProjects"></div>
+    </section>
+
+    <section id="how" class="section how">
+      <div class="section-heading">
+        <p class="eyebrow">03 / HOW IT WORKS</p>
+        <h2>От идеи до CC</h2>
+      </div>
+      <div class="steps">
+        <article><b>01</b><h3>Референс</h3><p>Загружаешь изображение или описываешь идею словами.</p></article>
+        <article><b>02</b><h3>AI-концепт</h3><p>Система анализирует форму, детали, материалы и стиль.</p></article>
+        <article><b>03</b><h3>3D + Sims 4</h3><p>Следующий этап — создание меша, текстур и готового .package.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><strong>CC FORGE</strong><span>Built for Sims 4 creators.</span></footer>
+  <script src="script.js"></script>
+</body>
+</html>
