@@ -46,11 +46,11 @@ export default {
       const content = [{
         type: "input_text",
         text:
-          "Create an original clothing-only concept for The Sims 4 CC Forge. " +
+          "Create an original Maxis Match clothing-only concept for The Sims 4 CC Forge. " +
           "The garment itself is the subject. Do NOT generate a person, face, body, mannequin, model, influencer, outfit photo, or lifestyle scene. " +
-          "Show one complete garment clearly on a clean neutral studio background, centered and fully visible, like a professional fashion product/concept sheet. " +
+          "Show one complete garment clearly on a clean neutral studio background, centered and fully visible, like a clean Sims 4 CAS asset concept sheet. " +
           "Preserve the requested garment type and key visual details from the reference, while creating an original design. " +
-          "Prioritize silhouette, construction, seams, closures, pockets, trims, fabric, texture, colors and CC-friendly details. " +
+          "Use simplified Maxis Match proportions, clean stylized shapes, readable seams and trims, controlled detail, game-friendly color blocking, and a polished Sims 4 CAS aesthetic. Prioritize silhouette, construction, seams, closures, pockets, trims, stylized fabric texture, colors and CC-friendly details. " +
           "If a reference photo contains a person wearing the garment, extract the garment design only and ignore the person. " +
           "User description: " +
           (String(description).trim() ||
@@ -79,7 +79,6 @@ export default {
             model: "gpt-image-2",
             action: image ? "edit" : "generate",
             background: "opaque",
-            input_fidelity: "high",
             size: "1024x1024"
           }]
         })
